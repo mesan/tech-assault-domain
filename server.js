@@ -1,8 +1,12 @@
-var Hapi = require('hapi');
+import Hapi from 'hapi';
+import boardEndpoints from './board/boardEndpoints';
 
-var server = new Hapi.Server();
+let server = new Hapi.Server();
+
 server.connection({ port: process.env.PORT || 3000 });
 
-server.start(function () {
+server.start(() => {
     console.log('Server running at:', server.info.uri);
+
+    boardEndpoints(server);
 });

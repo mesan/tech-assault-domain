@@ -1,15 +1,15 @@
 {
-    "name": "tech-assault-domain",
-    "version": "0.1.0",
-    "description": "Service performing domain operations in Tech Assault.",
-    "main": "index.js",
-    "scripts": {
-        "test": "mocha",
-        "start": "node server"
-    },
-    "author": "Arild Wanvik Tvergrov <arild.wanvik@gmail.com>",
-    "license": "BSD-2-Clause",
-    "dependencies": {
-        "hapi": "~8.4.0"
-    }
+  "name": "tech-assault-domain",
+  "version": "0.1.0",
+  "description": "Service performing domain operations in Tech Assault.",
+  "scripts": {
+    "test": "mocha",
+    "start": "babel-node server"
+  },
+  "author": "Arild Wanvik Tvergrov <arild.wanvik@gmail.com>",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "hapi": "~8.4.0",
+    "immutable": "~3.7.2"
+  }
 }
