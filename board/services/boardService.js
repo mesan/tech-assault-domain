@@ -1,13 +1,17 @@
 import {List} from '../../util/collections';
 
-import boardConfig from '../boardConfig';
+import {
+    COLUMN_COUNT,
+    ROW_COUNT,
+    TILE_EMPTY
+} from '../boardConstants';
 
 export function getEmptyBoard() {
     let board = [];
     
-    for (let x = 0; x < boardConfig.COLUMN_COUNT; x++) {
-        for (let y = 0; y < boardConfig.ROW_COUNT; y++) {
-            board.push(boardConfig.TILE_EMPTY);
+    for (let x = 0; x < COLUMN_COUNT; x++) {
+        for (let y = 0; y < ROW_COUNT; y++) {
+            board.push(TILE_EMPTY);
         }
     }
 

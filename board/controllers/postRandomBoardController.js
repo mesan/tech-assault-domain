@@ -1,6 +1,6 @@
 import {getEmptyBoard} from '../services/boardService';
 import {getRandomNumber, getRandomNumbers} from '../../util/random';
-import {COLUMN_COUNT, ROW_COUNT, TILE_BLOCK} from '../boardConfig';
+import {COLUMN_COUNT, ROW_COUNT, TILE_BLOCK} from '../boardConstants';
 
 export default function getRandomBoardController(request, reply) {
     let board = getEmptyBoard(); 

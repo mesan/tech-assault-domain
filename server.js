@@ -1,5 +1,6 @@
 import Hapi from 'hapi';
 import boardEndpoints from './board/boardEndpoints';
+import cardEndpoints from './card/cardEndpoints';
 
 let server = new Hapi.Server();
 
@@ -9,4 +10,5 @@ server.start(() => {
     console.log('Server running at:', server.info.uri);
 
     boardEndpoints(server);
+    cardEndpoints(server);
 });
