@@ -8,9 +8,9 @@ let server = new Hapi.Server();
 server.connection({
     port: process.env.PORT || 3001,
     tls: {
-        key: fs.readFileSync('./ssl/server.key'),
-        cert: fs.readFileSync('./ssl/server.crt'),
-        ca: fs.readFileSync('./ssl/ca.crt'),
+        key: fs.readFileSync(process.env.TECH_SSL_KEY),
+        cert: fs.readFileSync(process.env.TECH_SSL_CERT),
+        ca: fs.readFileSync(process.env.TECH_SSL_CA),
         requestCert: true,
         rejectUnauthorized: false
     }
