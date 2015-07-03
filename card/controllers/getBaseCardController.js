@@ -1,14 +1,21 @@
 import Card from '../domain/Card';
-import {MongoClient, ObjectID} from 'mongodb';
+import {ObjectID} from 'mongodb';
+import pdb from '../../util/pdb';
 
 export default function getBaseCardController(request, reply) {
-    if (process.env.TECH_DOMAIN_MONGOLAB_URI) {
-        MongoClient.connect(process.env.TECH_DOMAIN_MONGOLAB_URI, (err, db) => {
-            var collection = db.collection('baseCardCollection');
-            collection.find({ _id: ObjectID(request.params.baseCardId) }).toArray((err, docs) => {
-                reply(docs);
-                db.close();
-            });
+    pdb.connect(process.env.TECH_DOMAIN_MONGOLAB_URI, 'baseCards')
+        .then(([db, collection, promise]) => {
+            return promise(collection.find({ _id: ObjectID(request.params.baseCardId) }));
+        })
+        .then(([err, baseCards]) => {
+            if (err) {
+                return reply(err);
+            }
+
+            reply(baseCards);
+        })
+        .catch((err) => {
+            console.log(err);
+            reply(err);
         });
-    }
 }
