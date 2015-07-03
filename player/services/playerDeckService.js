@@ -1,6 +1,8 @@
 import pdb from '../../util/pdb';
 
-const { TECH_DOMAIN_MONGOLAB_URI } = process.env;
+const {
+    TECH_DOMAIN_MONGOLAB_URI
+} = process.env;
 
 let playerDeckService = {
 
@@ -9,9 +11,9 @@ let playerDeckService = {
 
         return new Promise((resolve, reject) => {
             pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'playerDecks')
-                .then(([db, collection, promise]) => {
+                .then(([db, collection]) => {
                     connection = db;
-                    return promise(collection.find({ userId }, { _id: 0 }).limit(1));
+                    return collection.pfind({ userId }, { _id: 0 }).limit(1).toArray();
                 })
                 .then((playerDecks) => {
                     if (playerDecks.length) {
@@ -23,6 +25,8 @@ let playerDeckService = {
                     connection.close();
                 })
                 .catch((err) => {
+                    reject(err);
+                    console.log(err.stack);
                     throw err;
                 });
         });
@@ -39,6 +43,8 @@ let playerDeckService = {
                     resolve(playerDeckDoc);
                 })
                 .catch((err) => {
+                    reject(err);
+                    console.log(err.stack);
                     throw err;
                 });
         });

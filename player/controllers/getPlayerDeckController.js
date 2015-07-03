@@ -1,5 +1,6 @@
 import playerDeckService from '../services/playerDeckService';
 import randomBaseCardService from '../../card/services/randomBaseCardService';
+import uuid from 'node-uuid';
 
 export default function getPlayerDeckController(request, reply) {
     playerDeckService.getPlayerDeck(request.params.userId)
@@ -13,6 +14,7 @@ export default function getPlayerDeckController(request, reply) {
                     .then((baseCards) => {
                         let basePrimaryCards = baseCards.map((baseCard) => {
                             baseCard.primary = true;
+                            baseCard.id = uuid.v4();
                             return baseCard;
                         });
 

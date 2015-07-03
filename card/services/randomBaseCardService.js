@@ -8,19 +8,20 @@ const {
 let randomBaseCardService = {
 
     getRandomBaseCards(randomCount) {
-        let connection;
-
-        let skips = getRandomNumbers(0, 7, randomCount, false);
+        let connection, col;
 
         return new Promise((resolve, reject) => {
             pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'baseCards')
-                .then(([db, collection, promise]) => {
+                .then(([db, collection]) => {
                     connection = db;
+                    col = collection;
+                    return collection.pcount();
+                })
+                .then((count) => {
+                    let skips = getRandomNumbers(0, count - 1, randomCount, false);
 
-                    let promises = [];
-
-                    skips.forEach((skip) => {
-                        promises.push(promise(collection.find({}, { _id: 0 }).limit(1).skip(skip)));
+                    let promises = skips.map((skip) => {
+                        return col.pfind({}, { _id: 0 }).limit(1).skip(skip).toArray();
                     });
 
                     return Promise.all(promises);
@@ -35,6 +36,8 @@ let randomBaseCardService = {
                     resolve(docs);
                 })
                 .catch((err) => {
+                    console.log(err.stack);
+                    reject(err);
                     throw err;
                 });
         });

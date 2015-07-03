@@ -3,16 +3,21 @@ import {ObjectID} from 'mongodb';
 import pdb from '../../util/pdb';
 
 export default function getBaseCardController(request, reply) {
+    let connection;
+
     pdb.connect(process.env.TECH_DOMAIN_MONGOLAB_URI, 'baseCards')
-        .then(([db, collection, promise]) => {
-            return promise(collection.find({ _id: ObjectID(request.params.baseCardId) }));
+        .then(([db, collection]) => {
+            connection = db;
+            return collection.pfind({ _id: ObjectID(request.params.baseCardId) }).toArray();
         })
-        .then(([err, baseCards]) => {
-            if (err) {
-                return reply(err);
+        .then((baseCards) => {
+            if (baseCards.length) {
+                return reply(baseCards[0]);
             }
 
-            reply(baseCards);
+            reply();
+
+            connection.close();
         })
         .catch((err) => {
             console.log(err);
