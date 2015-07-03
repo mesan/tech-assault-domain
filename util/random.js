@@ -5,25 +5,25 @@ export function getRandomNumber(from, to) {
 }
 
 export function getRandomNumbers(from, to, count, unique) {
-    let numbers = List();
+    let numbers = [];
 
     if (unique) {
         if (to - from < count) {
             return numbers;
         }
 
-        while (numbers.size < count) {
+        while (numbers.length < count) {
             let randomNumber = _getRandomNumber(from, to);
 
-            if (!numbers.contains(randomNumber)) {
-                numbers = numbers.push(randomNumber);
+            if (numbers.indexOf(randomNumber) === -1) {
+                numbers.push(randomNumber);
             }
         }
 
         return numbers;
     } else {
-        while (numbers.size < count) {
-            numbers = numbers.push(_getRandomNumber(from, to));
+        while (numbers.length < count) {
+            numbers.push(_getRandomNumber(from, to));
         }
 
         return numbers;

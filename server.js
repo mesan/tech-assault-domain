@@ -2,18 +2,12 @@ import fs from 'fs';
 import Hapi from 'hapi';
 import boardEndpoints from './board/boardEndpoints';
 import cardEndpoints from './card/cardEndpoints';
+import playerEndpoints from './player/playerEndpoints';
 
 let server = new Hapi.Server();
 
 server.connection({
-    port: process.env.PORT || 3001,
-    tls: {
-        key: fs.readFileSync(process.env.TECH_SSL_KEY),
-        cert: fs.readFileSync(process.env.TECH_SSL_CERT),
-        ca: fs.readFileSync(process.env.TECH_SSL_CA),
-        requestCert: true,
-        rejectUnauthorized: false
-    }
+    port: process.env.PORT || 3001
 });
 
 server.start(() => {
@@ -21,6 +15,7 @@ server.start(() => {
 
     boardEndpoints(server);
     cardEndpoints(server);
+    playerEndpoints(server);
 
     server.route({
         method: ['GET'],
