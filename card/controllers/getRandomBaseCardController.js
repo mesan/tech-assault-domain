@@ -10,6 +10,7 @@ export default function getRandomBaseCardController(request, reply) {
 
     pdb.connect(process.env.TECH_DOMAIN_MONGOLAB_URI, 'baseCards')
         .then(([db, collection, promise]) => {
+
             let promises = [];
 
             skips.forEach((skip) => {
@@ -28,5 +29,6 @@ export default function getRandomBaseCardController(request, reply) {
         })
         .catch((err) => {
             console.log(err);
+            reply(err);
         });
 }
