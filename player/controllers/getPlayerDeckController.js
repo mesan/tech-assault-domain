@@ -1,27 +1,36 @@
-import pdb from '../../util/pdb';
-
-const { TECH_DOMAIN_MONGOLAB_URI } = process.env;
+import playerDeckService from '../services/playerDeckService';
+import randomBaseCardService from '../../card/services/randomBaseCardService';
 
 export default function getPlayerDeckController(request, reply) {
-
-    let connection;
-
-    pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'playerDecks')
-        .then(([db, collection, promise]) => {
-            connection = db;
-            return promise(collection.find({ userId: request.params.userId }).limit(1));
-        })
-        .then((decks) => {
-            if (decks.length > 0) {
-                reply(decks[0].deck);
-            } else {
-                reply(null);
+    playerDeckService.getPlayerDeck(request.params.userId)
+        .then((playerDeck) => {
+            if (!playerDeck) {
+                return reply();
             }
 
-            connection.close();
+            if (!playerDeck.deck) {
+                return randomBaseCardService.getRandomBaseCards(5)
+                    .then((baseCards) => {
+                        let basePrimaryCards = baseCards.map((baseCard) => {
+                            baseCard.primary = true;
+                            return baseCard;
+                        });
+
+                        return playerDeckService.createPlayerDeck(request.params.userId, basePrimaryCards);
+                    })
+                    .then((playerDeck) => {
+                        reply(playerDeck);
+                    })
+                    .catch((err) => {
+                        console.log(err.stack);
+                        reply(err);
+                    });
+            } else {
+                reply(playerDeck);
+            }
         })
         .catch((err) => {
-            console.log(err);
+            console.log(err.stack);
             reply(err);
         });
 }

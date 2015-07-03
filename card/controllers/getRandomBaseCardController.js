@@ -1,9 +1,9 @@
-import {getRandomBaseCards} from '../services/randomBaseCardService';
+import randomBaseCardService from '../services/randomBaseCardService';
 
 export default function getRandomBaseCardController(request, reply) {
     let randomCount = parseInt(request.params.randomCount, 10);
 
-    getRandomBaseCards(randomCount)
+    randomBaseCardService.getRandomBaseCards(randomCount)
         .then((baseCards) => {
             reply(baseCards);
         })
