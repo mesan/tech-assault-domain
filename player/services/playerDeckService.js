@@ -1,4 +1,5 @@
 import pdb from '../../util/pdb';
+import uuid from 'node-uuid';
 
 const {
     TECH_DOMAIN_MONGOLAB_URI
@@ -33,10 +34,20 @@ let playerDeckService = {
     },
 
     createPlayerDeck(userId, deck) {
+
+        let deckWithIds = deck.map((card) => {
+            card.id = uuid.v4();
+            return card;
+        });
+
+        let primaryDeck = deckWithIds.map((card) => {
+            return card.id;
+        });
+
         return new Promise((resolve, reject) => {
             pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'playerDecks')
                 .then(([db, collection]) => {
-                    let playerDeckDoc = { userId, deck };
+                    let playerDeckDoc = { userId, deck, primaryDeck };
                     collection.update({ userId }, playerDeckDoc);
                     db.close();
 
