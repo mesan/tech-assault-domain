@@ -5,7 +5,6 @@ export default {
         return new Promise((resolve, reject) => {
             MongoClient.connect(connectionString, (err, db) => {
                 if (err) {
-                    throw err;
                     return reject(err);
                 }
 
@@ -31,8 +30,7 @@ function pfind() {
         return new Promise((resolve, reject) => {
             cursor.toArray((err, docs) => {
                 if (err) {
-                    reject(err);
-                    throw err;
+                    return reject(err);
                 }
 
                 return resolve(docs);
@@ -47,7 +45,7 @@ function pcount() {
     return new Promise((resolve, reject) => {
         this.count((err, result) => {
             if (err) {
-                throw err;
+                return reject(err);
             }
 
             resolve(result);

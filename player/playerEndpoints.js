@@ -1,4 +1,5 @@
 import getPlayerDeckController from './controllers/getPlayerDeckController';
+import getPlayerPrimaryDeckController from './controllers/getPlayerPrimaryDeckController';
 import putPlayerPrimaryDeckController from './controllers/putPlayerPrimaryDeckController';
 
 export default function playerEndpoints(server) {
@@ -6,6 +7,12 @@ export default function playerEndpoints(server) {
         method: 'GET',
         path: '/players/{userId}/deck',
         handler: getPlayerDeckController
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/players/{userId}/deck/primary',
+        handler: getPlayerPrimaryDeckController
     });
 
     server.route({
