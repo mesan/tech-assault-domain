@@ -8,6 +8,9 @@ const {
 
 let enlistmentService = {
 
+    /**
+     * Adds a player to the enlistment collection.
+     */
     enlistPlayer(userToken) {
         let connection;
 
@@ -21,6 +24,9 @@ let enlistmentService = {
             });
     },
 
+    /**
+     * Removes a player from the enlistment collection.
+     */
     withdrawPlayer(userToken) {
         let connection;
 
@@ -34,8 +40,12 @@ let enlistmentService = {
             });
     },
 
+    /**
+     * Finds unprocessed player enlistments and matches these players against each other, one-on-one. Once processed,
+     * the enlistments are removed from the collection.
+     */
     matchEnlistedPlayers() {
-        let versus = [];
+        let matches = [];
 
         let connection, collection;
 
@@ -71,7 +81,7 @@ let enlistmentService = {
                         return selectedIndices.indexOf(enlistmentIndex) === -1
                     });
 
-                    versus.push(selectedOpponents);
+                    matches.push(selectedOpponents);
                 }
 
                 if (enlistments.length > 0) {
@@ -86,7 +96,7 @@ let enlistmentService = {
             })
             .then(() => {
                 connection.close();
-                return versus;
+                return matches;
             });
     }
 };
