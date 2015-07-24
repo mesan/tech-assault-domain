@@ -1,14 +1,12 @@
-import {List} from './collections';
-
 export function getRandomNumber(from, to) {
     return _getRandomNumber(from, to);
 }
 
-export function getRandomNumbers(from, to, count, unique) {
+export function getRandomNumbers(from, to, count, unique = false) {
     let numbers = [];
 
     if (unique) {
-        if (to - from < count) {
+        if (to - from < count - 1) {
             return numbers;
         }
 
