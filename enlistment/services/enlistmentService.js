@@ -18,7 +18,19 @@ let enlistmentService = {
             })
             .then((writeResult) => {
                 connection.close();
-                return writeResult;
+            });
+    },
+
+    withdrawPlayer(userToken) {
+        let connection;
+
+        return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'enlistments')
+            .then(([db, collection]) => {
+                connection = db;
+                return collection.remove({ userToken });
+            })
+            .then((writeResult) => {
+                connection.close();
             });
     },
 

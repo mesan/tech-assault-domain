@@ -1,4 +1,5 @@
 import postEnlistmentController from './controllers/postEnlistmentController';
+import deleteEnlistmentController from './controllers/deleteEnlistmentController';
 import getMatchesController from './controllers/getMatchesController';
 
 export default function playerEndpoints(server) {
@@ -6,6 +7,12 @@ export default function playerEndpoints(server) {
         method: 'POST',
         path: '/enlistments/{userToken}',
         handler: postEnlistmentController
+    });
+
+    server.route({
+        method: 'DELETE',
+        path: '/enlistments/{userToken}',
+        handler: deleteEnlistmentController
     });
 
     server.route({
