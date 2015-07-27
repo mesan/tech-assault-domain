@@ -1,22 +1,36 @@
 import {MongoClient} from 'mongodb';
 
+let connectionStrings = [];
+let connections = [];
+
 export default {
     connect(connectionString, collectionName) {
         return new Promise((resolve, reject) => {
-            MongoClient.connect(connectionString, (err, db) => {
+            const connectionStringIndex = connectionStrings.indexOf(connectionString);
+
+            if (connectionStringIndex !== -1) {
+                return resolve(connections[connectionStringIndex]);
+            }
+
+            MongoClient.connect(connectionString, (err, connection) => {
                 if (err) {
                     return reject(err);
                 }
 
-                let collection = db.collection(collectionName);
-
-                let pCollection = Object.create(collection);
-
-                pCollection.pcount = pcount.bind(pCollection);
-                pCollection.pfind = pfind.bind(pCollection);
-
-                return resolve([db, pCollection]);
+                connectionStrings.push(connectionString);
+                connections.push(connection);
+                resolve(connection);
             });
+        })
+        .then((connection) => {
+            let collection = connection.collection(collectionName);
+
+            let pCollection = Object.create(collection);
+
+            pCollection.pcount = pcount.bind(pCollection);
+            pCollection.pfind = pfind.bind(pCollection);
+
+            return [connection, pCollection];
         });
     }
 };

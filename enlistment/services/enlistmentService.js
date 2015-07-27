@@ -12,15 +12,9 @@ let enlistmentService = {
      * Adds a player to the enlistment collection.
      */
     enlistPlayer(userToken) {
-        let connection;
-
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'enlistments')
             .then(([db, collection]) => {
-                connection = db;
                 return collection.update({ userToken }, { userToken }, { upsert: true });
-            })
-            .then((writeResult) => {
-                connection.close();
             });
     },
 
@@ -28,15 +22,9 @@ let enlistmentService = {
      * Removes a player from the enlistment collection.
      */
     withdrawPlayer(userToken) {
-        let connection;
-
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'enlistments')
             .then(([db, collection]) => {
-                connection = db;
                 return collection.remove({ userToken });
-            })
-            .then((writeResult) => {
-                connection.close();
             });
     },
 
@@ -47,13 +35,12 @@ let enlistmentService = {
     matchEnlistedPlayers() {
         let matches = [];
 
-        let connection, collection;
+        let collection;
 
         const readerId = uuid.v4();
 
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'enlistments')
             .then(([db, col]) => {
-                connection = db;
                 collection = col;
 
                 return collection.pfind({ readerId: { $exists: false }}).toArray();
@@ -86,6 +73,7 @@ let enlistmentService = {
 
                 if (enlistments.length > 0) {
                     const enlistmentIds = enlistments.map(enlistment => enlistment._id);
+
                     return Promise.all([
                         collection.remove({ readerId, _id: { $nin: enlistmentIds }}),
                         collection.update({ readerId, _id: { $in: enlistmentIds }}, { $unset: { readerId: '' }})
@@ -95,7 +83,6 @@ let enlistmentService = {
                 return collection.remove({ readerId });
             })
             .then(() => {
-                connection.close();
                 return matches;
             });
     }

@@ -8,11 +8,8 @@ const {
 let playerDeckService = {
 
     getPlayerDeck(userId) {
-        let connection;
-
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'playerDecks')
             .then(([db, collection]) => {
-                connection = db;
                 return collection.pfind({ userId }, { _id: 0 }).limit(1).toArray();
             })
             .then((playerDecks) => {
@@ -21,10 +18,6 @@ let playerDeckService = {
                 } else {
                     return null;
                 }
-            })
-            .then((playerDeck) => {
-                connection.close();
-                return playerDeck;
             });
     },
 
@@ -38,12 +31,14 @@ let playerDeckService = {
             return card.id;
         });
 
+        let playerDeckDoc;
+
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'playerDecks')
             .then(([db, collection]) => {
                 let playerDeckDoc = { userId, deck, primaryDeck };
-                collection.update({ userId }, playerDeckDoc);
-                db.close();
-
+                return collection.update({ userId }, playerDeckDoc);
+            })
+            .then(() => {
                 return playerDeckDoc;
             });
     }

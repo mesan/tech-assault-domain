@@ -7,11 +7,8 @@ const {
 let playerPrimaryDeckService = {
 
     getPlayerPrimaryDeck(userId) {
-        let connection;
-
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'playerDecks')
             .then(([db, collection]) => {
-                connection = db;
                 return collection.pfind({ userId }, { _id: 0}).limit(1).toArray();
             })
             .then((playerDeckDocs) => {
@@ -38,8 +35,6 @@ let playerPrimaryDeckService = {
                     return playerDeckById[cardId];
                 });
 
-                connection.close();
-
                 return {
                     userId: playerDeck.userId,
                     primaryDeck,
@@ -53,11 +48,10 @@ let playerPrimaryDeckService = {
             throw 'No more than five primary cards';
         }
 
-        let connection, col;
+        let col;
 
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'playerDecks')
             .then(([db, collection]) => {
-                connection = db;
                 col = collection;
                 return collection.pfind({ userId }, { _id: 0 }).limit(1).toArray();
             })

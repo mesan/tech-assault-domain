@@ -8,11 +8,10 @@ const {
 let randomBaseCardService = {
 
     getRandomBaseCards(randomCount) {
-        let connection, col;
+        let col;
 
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'baseCards')
             .then(([db, collection]) => {
-                connection = db;
                 col = collection;
                 return collection.pcount();
             })
@@ -26,8 +25,6 @@ let randomBaseCardService = {
                 return Promise.all(promises);
             })
             .then((docsList) => {
-                connection.close();
-
                 let docs = docsList.map((docs) => {
                     return docs[0];
                 });
