@@ -14,7 +14,6 @@
     "immutable": "~3.7.2",
     "babel": "~5.2.15",
     "mongodb": "~2.0.28",
-    "superagent": "~1.2.0",
     "node-uuid": "~1.4.3"
   }
 }
