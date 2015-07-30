@@ -1,4 +1,5 @@
 import getRankingsController from './controllers/getRankingsController';
+import getRankingForPlayerController from './controllers/getRankingForPlayerController'
 
 export default function highscoreEndpoints(server) {
 
@@ -8,4 +9,9 @@ export default function highscoreEndpoints(server) {
         handler: getRankingsController
     });
 
+    server.route({
+        method: 'GET',
+        path: '/rankings/player/{userId}',
+        handler: getRankingForPlayerController
+    });
 }

@@ -1,11 +1,13 @@
 import {ObjectID} from 'mongodb';
 import pdb from '../../util/pdb';
+import { DEFAULT_NUMBER_OF_RANKINGS } from '../highscoreConstants';
 
-// TODO: Remove ranking and move player score to player object
 export default function getRankingsController(request, reply) {
+    let userId = request.params.userId;
+
     pdb.connect(process.env.TECH_DOMAIN_MONGOLAB_URI, 'rankings')        
         .then(([db, collection]) => {
-            let numberOfRankings = parseInt(request.params.numberOfRankings);
+            let numberOfRankings = parseInt(request.params.numberOfRankings) || DEFAULT_NUMBER_OF_RANKINGS;
 
             return collection.find().sort({score: -1}).limit(numberOfRankings).toArray();
         })
