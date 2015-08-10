@@ -1,19 +1,32 @@
-import {List} from '../../util/collections';
+import {getRandomNumber, getRandomNumbers} from '../../util/random';
+import {columnCount, rowCount, tileBlock, tileEmpty} from '../boardConstants';
 
-import {
-    COLUMN_COUNT,
-    ROW_COUNT,
-    TILE_EMPTY
-} from '../boardConstants';
+export default {
 
-export function getEmptyBoard() {
-    let board = [];
-    
-    for (let x = 0; x < COLUMN_COUNT; x++) {
-        for (let y = 0; y < ROW_COUNT; y++) {
-            board.push(TILE_EMPTY);
+    createBoard() {
+        const board = getEmptyBoard();
+
+        const blockCount = getRandomNumber(0, 6);
+
+        const blockIndices = getRandomNumbers(0, columnCount * rowCount, blockCount, true);
+
+        for (let blockIndex of blockIndices) {
+            board[blockIndex] = tileBlock;
+        }
+
+        return board;
+    }
+
+};
+
+function getEmptyBoard() {
+    const board = [];
+
+    for (let x = 0; x < columnCount; x++) {
+        for (let y = 0; y < rowCount; y++) {
+            board.push(tileEmpty);
         }
     }
 
-    return List(board);
+    return board;
 }

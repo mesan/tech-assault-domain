@@ -5,6 +5,7 @@ import cardEndpoints from './card/cardEndpoints';
 import playerEndpoints from './player/playerEndpoints';
 import enlistmentEndpoints from './enlistment/enlistmentEndpoints';
 import highscoreEndpoints from './highscore/highscoreEndpoints';
+import matchEndpoints from './match/matchEndpoints';
 
 let server = new Hapi.Server();
 
@@ -21,7 +22,7 @@ server.start(() => {
     playerEndpoints(server);
     enlistmentEndpoints(server);
     highscoreEndpoints(server);
-
+    matchEndpoints(server);
 
     server.route({
         method: ['GET'],

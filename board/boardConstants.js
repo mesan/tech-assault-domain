@@ -1,6 +1,6 @@
 export default {
-    COLUMN_COUNT: 4,
-    ROW_COUNT: 4,
-    TILE_EMPTY: 0,
-    TILE_BLOCK: 1
+    columnCount: 4,
+    rowCount: 4,
+    tileEmpty: 0,
+    tileBlock: 1
 };
