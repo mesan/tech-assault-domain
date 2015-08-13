@@ -36,6 +36,9 @@ export default {
         // Initialize card registry.
         const cards = [];
 
+        // Initialize match state as active.
+        const active = true;
+
         return Promise.all([
             playerDeckService.getPlayerPrimaryDeck(userId1),
             playerDeckService.getPlayerPrimaryDeck(userId2),
@@ -49,12 +52,14 @@ export default {
 
                 match = {
                     matchId,
+                    active,
                     board,
                     nextTurn,
                     score,
                     actions,
                     cards,
-                    primaryDecks
+                    primaryDecks,
+                    userIds
                 };
 
                 return collection.insert(match);
@@ -64,4 +69,93 @@ export default {
                 return match;
             });
     },
+
+    performTurn(userId, turn) {
+        const { cardId, cardPosition, actionType } = turn;
+
+        let collection;
+        let match;
+
+        return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'matches')
+            .then(([db, col]) => {
+                collection = col;
+                return collection.pfind({ userIds: userId, active: true }).toArray();
+            })
+            .then(docs => {
+                if (!docs.length) {
+                    throw 'No active match found!';
+                }
+
+                return docs[0];
+            })
+            .then(activeMatchByUser => {
+                match = activeMatchByUser;
+
+                const { nextTurn, userIds, primaryDecks, board, cards, score } = match;
+
+                // Is it this player's turn?
+                if (nextTurn !== userId) {
+                    throw 'Not your turn!';
+                }
+
+                // Is it a valid card?
+                const userIndex = userIds.indexOf(userId);
+                const opponentIndex = userIndex === 0 ? 1 : 0;
+                const primaryDeck = primaryDecks[userIndex];
+
+                const cardIdIndex = primaryDeck.map(card => card.id).indexOf(cardId);
+
+                const invalidCardId = cardIdIndex === -1;
+
+                if (invalidCardId) {
+                    throw `Invalid card ID! (${cardId})`;
+                }
+
+                // Is it a valid position on the board?
+                const invalidPosition = board[cardPosition] !== 0;
+
+                if (invalidPosition) {
+                    throw `Invalid placement of card! (${cardPosition})`;
+                }
+
+                // Place card on board.
+                match.board[cardPosition] = cardId;
+
+                // Remove placed card from primary deck.
+                const [placedCard] = primaryDecks[userIndex].splice(cardIdIndex, 1);
+
+                // Set the card's owner to this player.
+                placedCard.owner = userId;
+
+                // Add it to the cards array.
+                cards.push(placedCard);
+
+                // Recalculate players' scores.
+                const playerScore = cards.filter(card => card.owner === userId).length;
+                const opponentScore = cards.length - playerScore;
+
+                score[userIndex] = playerScore;
+                score[opponentIndex] = opponentScore;
+
+                // Set next turn to opponent.
+                match.nextTurn = userIds[opponentIndex];
+
+                // Calculate events.
+                const events = [];
+
+                // Create and add action to match.
+                const action = {
+                    player: userId,
+                    type: actionType,
+                    cardId,
+                    cardPosition,
+                    events
+                };
+
+                match.actions.push(action);
+
+                return collection.update({ userIds: userId, active: true, nextTurn: userId }, match);
+            })
+            .then(() => match);
+    }
 };
