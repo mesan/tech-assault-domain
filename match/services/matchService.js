@@ -12,7 +12,9 @@ const {
 
 export default {
 
-    createMatch(userIds) {
+    createMatch(users) {
+
+        const userIds = users.map(user => user.id);
 
         const [userId1, userId2] = userIds;
 
@@ -59,7 +61,7 @@ export default {
                     actions,
                     cards,
                     primaryDecks,
-                    userIds
+                    users
                 };
 
                 return collection.insert(match);
@@ -68,6 +70,14 @@ export default {
                 match._id = undefined;
                 return match;
             });
+    },
+
+    getActiveMatchByUserId(userId) {
+        return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'matches')
+            .then(([db, col]) => {
+                return col.pfind({ users: { $elemMatch: { id: userId }}, active: true }).toArray();
+            })
+            .then(docs => docs.length ? docs[0]: undefined);
     },
 
     performTurn(userId, turn) {
@@ -79,7 +89,7 @@ export default {
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'matches')
             .then(([db, col]) => {
                 collection = col;
-                return collection.pfind({ userIds: userId, active: true }).toArray();
+                return collection.pfind({ users: { $elemMatch: { id: userId }}, active: true }).toArray();
             })
             .then(docs => {
                 if (!docs.length) {
@@ -91,7 +101,7 @@ export default {
             .then(activeMatchByUser => {
                 match = activeMatchByUser;
 
-                const { nextTurn, userIds, primaryDecks, board, cards, score } = match;
+                const { nextTurn, users, primaryDecks, board, cards, score } = match;
 
                 // Is it this player's turn?
                 if (nextTurn !== userId) {
@@ -99,7 +109,7 @@ export default {
                 }
 
                 // Is it a valid card?
-                const userIndex = userIds.indexOf(userId);
+                const userIndex = users.map(user => user.id).indexOf(userId);
                 const opponentIndex = userIndex === 0 ? 1 : 0;
                 const primaryDeck = primaryDecks[userIndex];
 
@@ -138,7 +148,7 @@ export default {
                 score[opponentIndex] = opponentScore;
 
                 // Set next turn to opponent.
-                match.nextTurn = userIds[opponentIndex];
+                match.nextTurn = users[opponentIndex].id;
 
                 // Calculate events.
                 const events = [];
@@ -154,7 +164,7 @@ export default {
 
                 match.actions.push(action);
 
-                return collection.update({ userIds: userId, active: true, nextTurn: userId }, match);
+                return collection.update({ users: { $elemMatch: { id: userId }}, active: true, nextTurn: userId }, match);
             })
             .then(() => match);
     }

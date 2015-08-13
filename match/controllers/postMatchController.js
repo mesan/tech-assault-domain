@@ -1,9 +1,9 @@
 import matchService from '../services/matchService';
 
 export default function postMatchController(request, reply) {
-    const userIds = request.payload;
+    const users = request.payload;
 
-    matchService.createMatch(userIds)
+    matchService.createMatch(users)
         .then(reply)
         .catch(console.error)
         .catch(reply);
