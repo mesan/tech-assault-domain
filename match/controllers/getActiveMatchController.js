@@ -6,7 +6,7 @@ export default function getActiveMatchController(request, reply) {
     matchService.getActiveMatchByUserId(userId)
         .then((activeMatch) => {
             if (!activeMatch) {
-                return reply().code(404);
+                return reply();
             }
 
             return reply(activeMatch);
