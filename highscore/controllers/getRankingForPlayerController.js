@@ -22,20 +22,3 @@ export default function getRankingsController(request, reply) {
             reply(err);
         });
 }
-
-
-
-
-
-
-
-//            return Promise.resolve(
-//                collection.findOne( { player : userId })
-//            )
-//            .then((player) => {
-//                return collection.pfind({ score: { $gt: player.score } }).count();
-//            })
-//            .then((rank) => {
-//                reply(rank + 1);
-//            });
-//        })
