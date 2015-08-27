@@ -3,6 +3,7 @@ import pdb from '../../util/pdb';
 
 import boardService from '../../board/services/boardService';
 import playerDeckService from '../../player/services/playerPrimaryDeckService';
+import battleService from './battleService';
 
 import { getRandomNumber } from '../../util/random';
 
@@ -140,6 +141,11 @@ export default {
                 // Add it to the cards array.
                 cards.push(placedCard);
 
+                // Calculate events.
+                const battleResults = battleService.performBattles(match.board, match.cards, placedCard, cardPosition);
+
+                const { events } = battleResults;
+
                 // Recalculate players' scores.
                 const playerScore = cards.filter(card => card.owner === userId).length;
                 const opponentScore = cards.length - playerScore;
@@ -149,9 +155,6 @@ export default {
 
                 // Set next turn to opponent.
                 match.nextTurn = users[opponentIndex].id;
-
-                // Calculate events.
-                const events = [];
 
                 // Create and add action to match.
                 const action = {
