@@ -22,21 +22,19 @@ let playerDeckService = {
     },
 
     createPlayerDeck(userId, deck) {
-        let deckWithIds = deck.map((card) => {
+        let deckWithIds = deck.map(card => {
             card.id = uuid.v4();
             return card;
         });
 
-        let primaryDeck = deckWithIds.map((card) => {
-            return card.id;
-        });
+        let primaryDeck = deckWithIds.map(card => card.id);
 
         let playerDeckDoc;
 
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'playerDecks')
             .then(([db, collection]) => {
-                let playerDeckDoc = { userId, deck, primaryDeck };
-                return collection.update({ userId }, playerDeckDoc);
+                playerDeckDoc = { userId, deck, primaryDeck };
+                return collection.update({ userId }, playerDeckDoc, { upsert: true });
             })
             .then(() => {
                 return playerDeckDoc;
