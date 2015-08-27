@@ -11,10 +11,6 @@ export default function battle(playerCard, opponentCard) {
 	};
 };
 
-function findConnectedCards(board) {
-	
-}
-
 function calculateAttributeValueForBattle(cardAttributeValue) {
 	let attributeRange = findIntervalRangeFromValue(cardAttributeValue);
 
