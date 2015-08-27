@@ -7,7 +7,7 @@ export default function postTurnController(request, reply) {
     matchService.performTurn(userId, turn)
         .then(reply)
         .catch(err => {
-            console.error(err);
+            console.error(err.stack);
             reply(err);
         });
 }
