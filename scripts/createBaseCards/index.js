@@ -13,9 +13,7 @@ pdb.connect(process.env.TECH_DOMAIN_MONGOLAB_URI, 'baseCards')
         });
 
         bulk.execute();
-
-        db.close();
     })
     .catch((err) => {
-        console.log(err);
+        console.log(err.stack);
     });
