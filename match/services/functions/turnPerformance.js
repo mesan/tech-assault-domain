@@ -77,6 +77,14 @@ export default function turnPerformance(userId, turn, pdb) {
             match.nextTurn = users[opponentIndex].id;
 
             return match;
+        },
+
+        setMatchFinishedState(match) {
+            const [ primaryDeck1, primaryDeck2 ] = match.primaryDecks;
+
+            match.finished = primaryDeck1.length === 0 && primaryDeck2.length === 0;
+
+            return match;
         }
     };
 }
