@@ -1,6 +1,8 @@
 import pdb from '../../util/pdb';
 import uuid from 'node-uuid';
 
+import randomBaseCardService from '../../card/services/randomBaseCardService';
+
 const {
     TECH_DOMAIN_MONGOLAB_URI
 } = process.env;
@@ -13,11 +15,13 @@ let playerDeckService = {
                 return collection.pfind({ userId }, { _id: 0 }).limit(1).toArray();
             })
             .then((playerDecks) => {
-                if (playerDecks.length > 0) {
-                    return playerDecks[0];
-                } else {
-                    return null;
+                if (playerDecks.length === 0) {
+                    return randomBaseCardService.getRandomBaseCards(5)
+                        .then(baseCards => playerDeckService.createPlayerDeck(userId, baseCards))
+                        .then(() => playerDeckService.getPlayerDeck(userId));
                 }
+
+                return playerDecks[0];
             });
     },
 
@@ -36,9 +40,7 @@ let playerDeckService = {
                 playerDeckDoc = { userId, deck, primaryDeck };
                 return collection.update({ userId }, playerDeckDoc, { upsert: true });
             })
-            .then(() => {
-                return playerDeckDoc;
-            });
+            .then(() => playerDeckDoc);
     }
 };
 

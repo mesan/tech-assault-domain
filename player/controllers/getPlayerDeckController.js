@@ -7,15 +7,7 @@ export default function getPlayerDeckController(request, reply) {
     playerDeckService.getPlayerDeck(userId)
         .then((playerDeck) => {
             if (!playerDeck) {
-                return randomBaseCardService.getRandomBaseCards(5)
-                    .then((baseCards) => {
-                        return playerDeckService.createPlayerDeck(userId, baseCards);
-                    })
-                    .then(reply)
-                    .catch((err) => {
-                        console.log(err.stack);
-                        reply(err);
-                    });
+                reply().code(404);
             } else {
                 reply(playerDeck);
             }
