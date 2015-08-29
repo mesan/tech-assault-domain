@@ -5,8 +5,8 @@ import boardService from '../../board/services/boardService';
 import playerDeckService from '../../player/services/playerPrimaryDeckService';
 import battleService from './battleService';
 
-import findActiveMatch from '../repositories/findActiveMatch';
-import updateActiveMatch from '../repositories/updateActiveMatch';
+import getActiveMatch from './repositories/getActiveMatch';
+import updateActiveMatch from './repositories/updateActiveMatch';
 
 import turnPerformance from './functions/turnPerformance';
 import turnValidation from './functions/turnValidation';
@@ -45,8 +45,11 @@ export default {
         // Initialize card registry.
         const cards = [];
 
-        // Initialize match state as active.
+        // Initialize match as active.
         const active = true;
+
+        // Initialize match state as not finished.
+        const finished = false;
 
         return Promise.all([
             playerDeckService.getPlayerPrimaryDeck(userId1),
@@ -59,6 +62,8 @@ export default {
                     player2primaryDeck.primaryDeck
                 ];
 
+                const originalPrimaryDecks = primaryDecks.map(primaryDeck => primaryDeck.map(card => card.id));
+
                 match = {
                     matchId,
                     active,
@@ -68,7 +73,9 @@ export default {
                     actions,
                     cards,
                     primaryDecks,
-                    users
+                    originalPrimaryDecks,
+                    users,
+                    finished
                 };
 
                 return collection.insert(match);
@@ -80,7 +87,7 @@ export default {
     },
 
     getActiveMatchByUserId(userId) {
-        return findActiveMatch(userId);
+        return getActiveMatch(userId);
     },
 
     performTurn(userId, turn) {
@@ -95,10 +102,11 @@ export default {
             placeCardOnBoard,
             performAction,
             recalculateScore,
-            toggleNextTurn
+            toggleNextTurn,
+            setMatchFinishedState
             } = turnPerformance(userId, turn, pdb);
 
-        return findActiveMatch(userId)
+        return getActiveMatch(userId)
             .then(validateActiveMatchExists)
             .then(validatePlayerTurn)
             .then(validateCard)
@@ -107,6 +115,7 @@ export default {
             .then(performAction)
             .then(recalculateScore)
             .then(toggleNextTurn)
+            .then(setMatchFinishedState)
             .then(updateActiveMatch);
     }
 };

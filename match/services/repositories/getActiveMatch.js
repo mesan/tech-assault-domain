@@ -1,4 +1,4 @@
-import pdb from '../../util/pdb';
+import pdb from '../../../util/pdb';
 
 const {
     TECH_DOMAIN_MONGOLAB_URI

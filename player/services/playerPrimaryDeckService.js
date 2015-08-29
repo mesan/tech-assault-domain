@@ -1,44 +1,48 @@
 import pdb from '../../util/pdb';
+import playerDeckService from './playerDeckService';
+import randomBaseCardService from '../../card/services/randomBaseCardService';
 
 const {
     TECH_DOMAIN_MONGOLAB_URI
 } = process.env;
 
-let playerPrimaryDeckService = {
+const playerPrimaryDeckService = {
 
     getPlayerPrimaryDeck(userId) {
         return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'playerDecks')
             .then(([db, collection]) => {
                 return collection.pfind({ userId }, { _id: 0}).limit(1).toArray();
             })
-            .then((playerDeckDocs) => {
-                if (!playerDeckDocs.length) {
-                    return null;
+            .then((playerPrimaryDecks) => {
+                if (playerPrimaryDecks.length === 0) {
+                    return randomBaseCardService.getRandomBaseCards(5)
+                        .then((baseCards) => playerDeckService.createPlayerDeck(userId, baseCards))
+                        .then(() => playerPrimaryDeckService.getPlayerPrimaryDeck(userId));
                 }
 
-                let playerDeck = playerDeckDocs[0];
+                const playerPrimaryDeck = playerPrimaryDecks[0];
 
-                if (typeof playerDeck.deck === 'undefined') {
-                    playerDeck.deck = [];
+                if (typeof playerPrimaryDeck.deck === 'undefined') {
+                    playerPrimaryDeck.deck = [];
                 }
 
-                if (typeof playerDeck.primaryDeck === 'undefined') {
-                    playerDeck.primaryDeck = [];
+                if (typeof playerPrimaryDeck.primaryDeck === 'undefined') {
+                    playerPrimaryDeck.primaryDeck = [];
                 }
 
-                let playerDeckById = playerDeck.deck.reduce((playerDeckById, card) => {
+                let playerDeckById = playerPrimaryDeck.deck.reduce((playerDeckById, card) => {
                     playerDeckById[card.id] = card;
                     return playerDeckById;
                 }, {});
 
-                let primaryDeck = playerDeck.primaryDeck.map((cardId) => {
+                let primaryDeck = playerPrimaryDeck.primaryDeck.map((cardId) => {
                     return playerDeckById[cardId];
                 });
 
                 return {
-                    userId: playerDeck.userId,
+                    userId: playerPrimaryDeck.userId,
                     primaryDeck,
-                    deck: playerDeck.deck
+                    deck: playerPrimaryDeck.deck
                 };
             });
     },
