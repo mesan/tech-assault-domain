@@ -5,8 +5,9 @@ export default function postBattleSimulatorController(request, reply) {
 	let playerCard = request.payload.playerCard;
 	let opponentCard = request.payload.opponentCard;
 	let board = request.payload.board;
+	let cards = request.payload.cards;
 
-	battleService.performBattles(board, [playerCard, opponentCard], playerCard, 1);
+	battleService.performBattles(board, cards, playerCard, 1);
 
 	let winner = engine(playerCard, opponentCard);
 
