@@ -35,7 +35,9 @@ export default function turnPerformance(userId, turn, pdb) {
 
             const battleResults = battleService.performBattles(board, cards, placedCard, cardPosition);
 
-            const { events } = battleResults;
+            const { cards, events } = battleResults;
+
+            match.cards = cards;
 
             // Create and add action to match.
             const action = {

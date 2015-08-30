@@ -15,7 +15,7 @@ export default {
     performBattles(board, cards, placedCard, cardPosition) {
 
         let battles = gameBoard(board, cards).findBattlingCards(placedCard, cardPosition);
-        let events = [];
+        const events = [];
 
         battles.forEach(function(battle) {
             let opposingCard = battle.card;
@@ -42,7 +42,6 @@ export default {
                     cardPosition: battle.boardIndex
                 });
             }
-
         });
 /*
 
@@ -63,8 +62,6 @@ export default {
 */
 
 
-        return {
-            events: events
-        };
+        return { cards, events };
     }
 }
