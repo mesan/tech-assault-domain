@@ -31,7 +31,7 @@ export default {
                     type : "battle",
                     opposingCardId : opposingCard.id,
                     cardPower: outcome.attackValue,
-                    opposingCardPower: outcome.defenceValue
+                    opposingCardPower: outcome.defenseValue
                 });
             }
             else {

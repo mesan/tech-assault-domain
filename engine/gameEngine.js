@@ -1,13 +1,13 @@
 export default function battle(playerCard, opponentCard) {
 	let attackValue = calculateAttributeValueForBattle(playerCard.attack);
-	let defenceValue = calculateAttributeValueForBattle(opponentCard.defence);
+	let defenseValue = calculateAttributeValueForBattle(opponentCard.defense);
 
 	return {
 		"attacker": playerCard,
 		"defender": opponentCard,
 		"attackValue": attackValue,
-		"defenceValue": defenceValue,
-		"winner": (attackValue > defenceValue) ? 'PLAYER' : 'OPPONENT'
+		"defenseValue": defenseValue,
+		"winner": (attackValue > defenseValue) ? 'PLAYER' : 'OPPONENT'
 	};
 };
 
