@@ -29,7 +29,10 @@ export default {
 
                 events.push({
                     type : "battle",
+                    cardId: placedCard.id,
+                    cardPosition: cardPosition,
                     opposingCardId : opposingCard.id,
+                    opposingCardPosition: battle.boardIndex,
                     cardPower: outcome.attackValue,
                     opposingCardPower: outcome.defenseValue
                 });
@@ -43,6 +46,7 @@ export default {
                 });
             }
         });
+
 /*
 
         "events": [
