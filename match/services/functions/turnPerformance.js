@@ -85,6 +85,42 @@ export default function turnPerformance(userId, turn, pdb) {
             match.finished = primaryDeck1.length === 0 && primaryDeck2.length === 0;
 
             return match;
+        },
+
+        setCardsToLoot(match) {
+            if (!match.finished) {
+                return match;
+            }
+
+            const { users, score, cards, originalPrimaryDecks } = match;
+            const [ score1, score2 ] = score;
+
+            // Will hold the cards that the winner may loot.
+            let cardsToLoot = [];
+
+            // Will eventually hold the card(s) the winner actually looted.
+            let cardsLooted = [];
+
+            if (score1 !== score2) {
+                const winnerIndex = score1 > score2 ? 0 : 1;
+                const loserIndex = winnerIndex === 0 ? 1 : 0;
+                const winningUserId = users[winnerIndex].id;
+                const originalPrimaryDeck = originalPrimaryDecks[winnerIndex];
+
+                cardsToLoot = cards
+                    .filter(card => card.owner === winningUserId && originalPrimaryDeck.indexOf(card.id) === -1)
+                    .map(card => card.id);
+
+                // If winner gets a perfect victory, he automatically gets the loser's entire primary deck!
+                if (score[loserIndex] === 0) {
+                    cardsLooted = originalPrimaryDecks[loserIndex];
+                }
+            }
+
+            match.cardsToLoot = cardsToLoot;
+            match.cardsLooted = cardsLooted;
+
+            return match;
         }
     };
 }

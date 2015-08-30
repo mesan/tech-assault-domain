@@ -103,7 +103,8 @@ export default {
             performAction,
             recalculateScore,
             toggleNextTurn,
-            setMatchFinishedState
+            setMatchFinishedState,
+            setCardsToLoot
             } = turnPerformance(userId, turn, pdb);
 
         return getActiveMatch(userId)
@@ -116,6 +117,7 @@ export default {
             .then(recalculateScore)
             .then(toggleNextTurn)
             .then(setMatchFinishedState)
+            .then(setCardsToLoot)
             .then(updateActiveMatch);
     }
 };
