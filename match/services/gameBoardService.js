@@ -52,7 +52,7 @@ export default function gameBoard (board, cards) {
 
                 let index = toIndex([x, y]);
 
-                if (typeof index !== 'undefined' && board[index] !== 0) {
+                if (typeof index !== 'undefined' && typeof board[index] === 'string') {
                     neighbouringCards.push({
                         boardIndex: index,
                         arrowIndex: value,
