@@ -15,14 +15,7 @@ export default {
     performBattles(board, cards, placedCard, cardPosition) {
 
         let battles = gameBoard(board, cards).findBattlingCards(placedCard, cardPosition);
-
-     /*   if (typeof gameboard.toCoords(16) === 'undefined') {
-            console.log("coords is out of bounds!");
-        }
-        if (typeof gameboard.toIndex([5,3]) === "undefined") {
-            console.log("index is out of bounds");
-        }*/
-        //let battles = gameboard.findBattlingCards(placedCard, cardPosition);
+        let events = [];
 
         battles.forEach(function(battle) {
             let opposingCard = battle.card;
@@ -33,16 +26,45 @@ export default {
                 console.log("BATTLE!!!");
                 let outcome = engine(placedCard, battle.card);
                 console.log("WINNER: " + outcome.winner);
+
+                events.push({
+                    type : "battle",
+                    opposingCardId : opposingCard.id,
+                    cardPower: outcome.attackValue,
+                    opposingCardPower: outcome.defenceValue
+                });
             }
             else {
-                console.log("TAKES IT!");
+                events.push({
+                    type : "takeover",
+                    newOwner : placedCard.owner,
+                    cardId : opposingCard.id,
+                    cardPosition: battle.boardIndex
+                });
             }
 
         });
+/*
+
+        "events": [
+            {
+                "type": "battle",
+                "opposingCardId": "2a5f316e-b55f-4c3d-866b-2c27737b5cd5",
+                "opposingCardPosition": 10,
+                "cardPower": 123,
+                "opposingCardPower": 118
+            },
+            {
+                "type": "takeOver",
+                "newOwner": "tw-123",
+                "cardId": "2a5f316e-b55f-4c3d-866b-2c27737b5cd5",
+                "cardPosition": 10
+            },
+*/
 
 
         return {
-            events: []
+            events: events
         };
     }
 }

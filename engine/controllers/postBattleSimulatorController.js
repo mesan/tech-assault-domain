@@ -3,13 +3,10 @@ import battleService from '../../match/services/battleService';
 
 export default function postBattleSimulatorController(request, reply) {
 	let playerCard = request.payload.playerCard;
-	let opponentCard = request.payload.opponentCard;
 	let board = request.payload.board;
 	let cards = request.payload.cards;
 
-	battleService.performBattles(board, cards, playerCard, 1);
+	let events = battleService.performBattles(board, cards, playerCard, 1);
 
-	let winner = engine(playerCard, opponentCard);
-
-	return reply(winner);
+	return reply(events);
 }
