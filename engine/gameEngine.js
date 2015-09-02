@@ -7,7 +7,7 @@ export default function battle(playerCard, opponentCard) {
 		"defender": opponentCard,
 		"attackValue": attackValue,
 		"defenseValue": defenseValue,
-		"winner": (attackValue > defenseValue) ? 'PLAYER' : 'OPPONENT'
+		"winner": (attackValue > defenseValue) ? playerCard.owner : opponentCard.owner
 	};
 };
 

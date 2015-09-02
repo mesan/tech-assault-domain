@@ -30,7 +30,164 @@ export default function gameBoard (board, cards) {
             return [x, y];
         },
 
-        findBattlingCards (playerCard, index) {
+        updateOwnerOnCard(cardId, newOwner) {
+            console.log("CardId: " + cardId);
+
+            let a = cardsLookup[cardId];
+            a.owner = newOwner;
+            cardsLookup[cardId] = a;
+
+            console.log("Oppdaterer kort " + a.name);
+        },
+
+        find (index) {
+            let cardId = board[index];
+            let card = cardsLookup[cardId];
+            let arrowPositions = this.readArrowPositionsOnCard(card);
+            let arrowCounter = 0;
+
+            for (;arrowCounter < arrowPositions.length; arrowCounter++) {
+                let arrowIndex = arrowPositions[arrowCounter];
+                let coords = this.coordinateForTileArrowIsPointingTo(index, arrowIndex);
+
+                let indexToCheck = toIndex([coords[0], coords[1]]);
+
+                if (this.isArrowPointingToEnemyCard(card.owner, indexToCheck)) {
+                    return {
+                        boardIndex: indexToCheck,
+                        arrowIndex: arrowIndex,
+                        card: cardsLookup[board[indexToCheck]]
+                    };
+                }
+            }
+
+            return true;
+
+           /* return {
+                next: function () {
+
+                }
+            }*/
+
+        },
+
+        isArrowPointingToEnemyCard(player, index) {
+            if (typeof index === 'undefined' || typeof board[index] !== 'string') {
+                return false;
+            }
+
+            let card = cardsLookup[board[index]];
+
+            return player === card.owner ? false : true;
+        },
+
+        coordinateForTileArrowIsPointingTo(cardIndex, arrowIndex) {
+            let coords = this.toCoords(cardIndex);
+
+            let x = coords[0] + NEIGHBORS[arrowIndex].x;
+            let y = coords[1] + NEIGHBORS[arrowIndex].y;
+
+            return [x, y];
+        },
+
+        readArrowPositionsOnCard (card) {
+            let arrowPositions = [];
+            let arrowIndexPosition = 0;
+
+            for (;arrowIndexPosition < card.arrows.length; arrowIndexPosition++) {
+                if (card.arrows[arrowIndexPosition] === 1) {
+                    arrowPositions.push(arrowIndexPosition);
+                }
+            }
+
+            return arrowPositions;
+        },
+
+        findOpposingCardsPointedToBy (playerCardIndex) {
+            let cardId = board[playerCardIndex];
+            let card = cardsLookup[cardId];
+
+            console.log("0000000000000000000000000000000");
+            console.log(card);
+            console.log("0000000000000000000000000000000");
+
+            let arrowPositions = this.readArrowPositionsOnCard(card);
+            let arrowCounter = 0;
+
+            let lala = [];
+            for (;arrowCounter < arrowPositions.length; arrowCounter++) {
+                let arrowIndex = arrowPositions[arrowCounter];
+                let coords = this.coordinateForTileArrowIsPointingTo(playerCardIndex, arrowIndex);
+
+                console.log("111111111111111111111111111");
+                console.log(coords);
+                console.log("111111111111111111111111111");
+
+                let indexToCheck = toIndex([coords[0], coords[1]]);
+
+                if (this.isArrowPointingToEnemyCard(card.owner, indexToCheck)) {
+                    console.log(cardsLookup[board[indexToCheck]]);
+
+                    lala.push({
+                        boardIndex: indexToCheck,
+                        arrowIndex: arrowIndex,
+                        card: cardsLookup[board[indexToCheck]]
+                    });
+                }
+            }
+
+            return lala;
+
+/*
+
+
+
+            let arrowLength = playerCard.arrows.length;
+            let arrowIndexPosition = 0;
+            let arrowPositions = [];
+            let arrows = playerCard.arrows;
+            let coords = this.toCoords(index);
+
+            for (;arrowIndexPosition < arrowLength; arrowIndexPosition++) {
+                if (arrows[arrowIndexPosition] === 1) {
+                    arrowPositions.push(arrowIndexPosition);
+                }
+            }
+
+            let lala = [];
+            for (let l = 0; l < arrowPositions.length; l++) {
+                let pos = arrowPositions[l];
+                let x = coords[0] + NEIGHBORS[pos].x;
+                let y = coords[1] + NEIGHBORS[pos].y;
+
+                let index = toIndex([x, y]);
+                if (typeof index !== 'undefined' && typeof board[index] === 'string') {
+                    let card = cardsLookup[board[index]];
+
+                    if (playerCard.owner !== card.owner) {
+                        cards.push({
+                            boardIndex: index,
+                            arrowIndex: pos,
+                            card: card
+                        });
+                    }
+                }
+            }
+
+            return lala;*/
+        },
+
+     /*   findBattlingCards (playerCard, index) {
+
+            let res = this.findOpposingCardsPointedToBy(playerCard, index);
+            this.updateOwnerOnCard("0afb4577-15b8-427d-b9de-1383389d1212", playerCard.owner);
+
+
+            while (res.next().value) {
+                console.log("Found connected card!");
+            }
+
+
             this.playerCard = playerCard;
             let arrows = playerCard.arrows;
             let arrowLength = playerCard.arrows.length;
@@ -63,11 +220,9 @@ export default function gameBoard (board, cards) {
 
             neighbouringCards = neighbouringCards.filter(removeCardsOwnedByPlayer, this);
 
-            console.log(neighbouringCards);
-
             return neighbouringCards;
         }
-
+*/
     }
 
     function toIndex (coords) {
@@ -95,14 +250,6 @@ export default function gameBoard (board, cards) {
         }
 
         return valid;
-    }
-
-    function removeCardsOwnedByPlayer(neighbouringCard) {
-        if (neighbouringCard.card.owner === this.playerCard.owner) {
-            return false;
-        }
-
-        return true;
     }
 }
 
