@@ -24,22 +24,26 @@ export default {
 
         while(opposingCardLocation != true) {
             let opposingCard = opposingCardLocation.card;
-            let battle = engine(placedCard, opposingCard);
 
-            events.push({
-                type : "battle",
-                cardId: placedCard.id,
-                cardPosition: cardPosition,
-                opposingCardId : opposingCard.id,
-                opposingCardPosition: opposingCardLocation.boardIndex,
-                cardPower: battle.attackValue,
-                opposingCardPower: battle.defenseValue
-            });
+            let battle = undefined;
+            if (isOpposingCardPointingToPlayer(opposingCardLocation.arrowIndex, opposingCard)) {
+                battle = engine(placedCard, opposingCard);
 
-            if (battle.winner === opposingCard.owner) {
+                events.push({
+                    type: "battle",
+                    cardId: placedCard.id,
+                    cardPosition: cardPosition,
+                    opposingCardId: opposingCard.id,
+                    opposingCardPosition: opposingCardLocation.boardIndex,
+                    cardPower: battle.attackValue,
+                    opposingCardPower: battle.defenseValue
+                });
+            }
+
+            if (typeof battle !== 'undefined' && battle.winner === opposingCard.owner) {
                 events.push({
                     type : "takeOver",
-                    newOwner : battle.winner,
+                    newOwner : opposingCard.owner,
                     cardId : placedCard.id,
                     cardPosition: cardPosition
                 });
@@ -49,12 +53,12 @@ export default {
             else {
                 events.push({
                     type : "takeOver",
-                    newOwner : battle.winner,
+                    newOwner : placedCard.owner,
                     cardId : opposingCard.id,
                     cardPosition: opposingCardLocation.boardIndex
                 });
 
-                gameboard.updateOwnerOnCard(opposingCard.id, battle.winner);
+                gameboard.updateOwnerOnCard(opposingCard.id, placedCard.owner);
 
                 let comboTakeovers = gameboard.findOpposingCardsPointedToBy(opposingCardLocation.boardIndex);
 
@@ -63,12 +67,12 @@ export default {
 
                     events.push({
                         type : "takeOver",
-                        newOwner : battle.winner,
+                        newOwner : placedCard.owner,
                         cardId : combo.card.id,
                         cardPosition: combo.boardIndex
                     });
 
-                    gameboard.updateOwnerOnCard(combo.card.id, battle.winner);
+                    gameboard.updateOwnerOnCard(combo.card.id, placedCard.owner);
                 }
             }
             opposingCardLocation = gameboard.find(cardPosition);
