@@ -38,17 +38,42 @@ export default {
                     cardPower: battle.attackValue,
                     opposingCardPower: battle.defenseValue
                 });
-            }
 
-            if (typeof battle !== 'undefined' && battle.winner === opposingCard.owner) {
-                events.push({
-                    type : "takeOver",
-                    newOwner : opposingCard.owner,
-                    cardId : placedCard.id,
-                    cardPosition: cardPosition
-                });
+                if (battle.winner === opposingCard.owner) {
+                    events.push({
+                        type : "takeOver",
+                        newOwner : opposingCard.owner,
+                        cardId : placedCard.id,
+                        cardPosition: cardPosition
+                    });
 
-                gameboard.updateOwnerOnCard(placedCard.id, battle.winner);
+                    break;
+                }
+                else {
+                    events.push({
+                        type : "takeOver",
+                        newOwner : placedCard.owner,
+                        cardId : opposingCard.id,
+                        cardPosition: opposingCardLocation.boardIndex
+                    });
+
+                    gameboard.updateOwnerOnCard(opposingCard.id, placedCard.owner);
+
+                    let comboTakeovers = gameboard.findOpposingCardsPointedToBy(opposingCardLocation.boardIndex);
+
+                    for (let comboIndex = 0; comboIndex < comboTakeovers.length; comboIndex++) {
+                        let combo = comboTakeovers[comboIndex];
+
+                        events.push({
+                            type: "takeOver",
+                            newOwner: placedCard.owner,
+                            cardId: combo.card.id,
+                            cardPosition: combo.boardIndex
+                        });
+
+                        gameboard.updateOwnerOnCard(combo.card.id, placedCard.owner);
+                    }
+                }
             }
             else {
                 events.push({
@@ -57,24 +82,8 @@ export default {
                     cardId : opposingCard.id,
                     cardPosition: opposingCardLocation.boardIndex
                 });
-
-                gameboard.updateOwnerOnCard(opposingCard.id, placedCard.owner);
-
-                let comboTakeovers = gameboard.findOpposingCardsPointedToBy(opposingCardLocation.boardIndex);
-
-                for (let comboIndex = 0; comboIndex < comboTakeovers.length; comboIndex++) {
-                    let combo = comboTakeovers[comboIndex];
-
-                    events.push({
-                        type : "takeOver",
-                        newOwner : placedCard.owner,
-                        cardId : combo.card.id,
-                        cardPosition: combo.boardIndex
-                    });
-
-                    gameboard.updateOwnerOnCard(combo.card.id, placedCard.owner);
-                }
             }
+
             opposingCardLocation = gameboard.find(cardPosition);
         }
 
