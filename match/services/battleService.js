@@ -1,15 +1,4 @@
-import engine from '../../engine/gameEngine';
 import GameBoard from './gameBoardService';
-
-var isOpposingCardPointingToPlayer = function (arrowPositionPointingToOpposingCard, opposingCard) {
-    let position = arrowPositionPointingToOpposingCard + 4;
-
-    if (position > 7) {
-        position = position - 8;
-    }
-
-    return opposingCard.arrows[position] === 1;
-}
 
 export default {
     performBattles(board, cards, placedCard, cardPosition) {
@@ -25,9 +14,9 @@ export default {
         while(opposingCardLocation != true) {
             let opposingCard = opposingCardLocation.card;
 
-            let battle = undefined;
+            let battleResult = undefined;
             if (isOpposingCardPointingToPlayer(opposingCardLocation.arrowIndex, opposingCard)) {
-                battle = engine(placedCard, opposingCard);
+                battleResult = battle(placedCard, opposingCard);
 
                 events.push({
                     type: "battle",
@@ -35,11 +24,11 @@ export default {
                     cardPosition: cardPosition,
                     opposingCardId: opposingCard.id,
                     opposingCardPosition: opposingCardLocation.boardIndex,
-                    cardPower: battle.attackValue,
-                    opposingCardPower: battle.defenseValue
+                    cardPower: battleResult.attackValue,
+                    opposingCardPower: battleResult.defenseValue
                 });
 
-                if (battle.winner === opposingCard.owner) {
+                if (battleResult.winner === opposingCard.owner) {
                     events.push({
                         type : "takeOver",
                         newOwner : opposingCard.owner,
@@ -82,6 +71,8 @@ export default {
                     cardId : opposingCard.id,
                     cardPosition: opposingCardLocation.boardIndex
                 });
+
+                gameboard.updateOwnerOnCard(opposingCard.id, placedCard.owner);
             }
 
             opposingCardLocation = gameboard.find(cardPosition);
@@ -90,3 +81,49 @@ export default {
         return { cards, events };
     }
 }
+
+function battle(playerCard, opponentCard) {
+    let attackValue = calculateAttributeValueForBattle(playerCard.attack);
+    let defenseValue = calculateAttributeValueForBattle(opponentCard.defense);
+
+    return {
+        "attacker": playerCard,
+        "defender": opponentCard,
+        "attackValue": attackValue,
+        "defenseValue": defenseValue,
+        "winner": (attackValue > defenseValue) ? playerCard.owner : opponentCard.owner
+    };
+};
+
+function calculateAttributeValueForBattle(cardAttributeValue) {
+    let attributeRange = findIntervalRangeFromValue(cardAttributeValue);
+
+    let attributeValue = randomValueFromInterval(
+        attributeRange.min,
+        attributeRange.max);
+
+    let penaltyValue = randomValueFromInterval(0, attributeValue);
+
+    return attributeValue - penaltyValue;
+};
+
+function findIntervalRangeFromValue(value) {
+    return {
+        min: value * 10,
+        max: (value * 10) + 9
+    }
+};
+
+function randomValueFromInterval(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+function isOpposingCardPointingToPlayer (arrowPositionPointingToOpposingCard, opposingCard) {
+    let position = arrowPositionPointingToOpposingCard + 4;
+
+    if (position > 7) {
+        position = position - 8;
+    }
+
+    return opposingCard.arrows[position] === 1;
+};
