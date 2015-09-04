@@ -89,6 +89,18 @@ export default function turnPerformance(userId, turn, pdb) {
             return match;
         },
 
+        setMatchWinner(match) {
+            if (!match.finished) {
+                return match;
+            }
+
+            const { users, score } = match;
+
+            match.winner = score[0] > score[1] ? users[0].id : users[1].id;
+
+            return match;
+        },
+
         setCardsToLoot(match) {
             if (!match.finished) {
                 return match;

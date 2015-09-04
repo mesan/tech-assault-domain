@@ -6,10 +6,15 @@ import playerDeckService from '../../player/services/playerPrimaryDeckService';
 import battleService from './battleService';
 
 import getActiveMatch from './repositories/getActiveMatch';
-import updateActiveMatch from './repositories/updateActiveMatch';
+import updateActiveMatchWithTurn from './repositories/updateActiveMatchWithTurn';
+import updateActiveMatchByWinner from './repositories/updateActiveMatchByWinner';
+import updatePlayerDecks from './repositories/updatePlayerDecks';
 
 import turnPerformance from './functions/turnPerformance';
+import matchValidation from './functions/matchValidation';
 import turnValidation from './functions/turnValidation';
+import lootValidation from './functions/lootValidation';
+import lootPerformance from './functions/lootPerformance';
 
 import { getRandomNumber } from '../../util/random';
 
@@ -20,7 +25,6 @@ const {
 export default {
 
     createMatch(users) {
-
         const userIds = users.map(user => user.id);
 
         const [userId1, userId2] = userIds;
@@ -92,7 +96,10 @@ export default {
 
     performTurn(userId, turn) {
         const {
-            validateActiveMatchExists,
+            validateActiveMatchExists
+            } = matchValidation();
+
+        const {
             validatePlayerTurn,
             validateCard,
             validatePosition
@@ -104,6 +111,7 @@ export default {
             recalculateScore,
             toggleNextTurn,
             setMatchFinishedState,
+            setMatchWinner,
             setCardsToLoot
             } = turnPerformance(userId, turn, pdb);
 
@@ -117,7 +125,35 @@ export default {
             .then(recalculateScore)
             .then(toggleNextTurn)
             .then(setMatchFinishedState)
+            .then(setMatchWinner)
             .then(setCardsToLoot)
-            .then(updateActiveMatch);
+            .then(updateActiveMatchWithTurn);
+    },
+
+    performLoot(userId, loot) {
+        const {
+            validateActiveMatchExists,
+            validateMatchIsFinished
+            } = matchValidation();
+
+        const {
+            validatePlayerIsWinner,
+            validateLootedCard
+            } = lootValidation(userId, loot);
+
+        const {
+            setCardToLoot,
+            setMatchToInactive
+            } = lootPerformance(userId, loot);
+
+        return getActiveMatch(userId)
+            .then(validateActiveMatchExists)
+            .then(validateMatchIsFinished)
+            .then(validatePlayerIsWinner)
+            .then(validateLootedCard)
+            .then(setCardToLoot)
+            .then(setMatchToInactive)
+            .then(updateActiveMatchByWinner)
+            .then(updatePlayerDecks);
     }
 };

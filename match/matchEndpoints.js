@@ -1,6 +1,7 @@
 import postMatchController from './controllers/postMatchController';
 import postTurnController from './controllers/postTurnController';
 import getActiveMatchController from './controllers/getActiveMatchController';
+import postLootCardController from './controllers/postLootCardController';
 
 export default function matchEndpoints(server) {
 
@@ -20,6 +21,12 @@ export default function matchEndpoints(server) {
         method: 'GET',
         path: '/matches/active/{userId}',
         handler: getActiveMatchController
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/matches/loot/{userId}',
+        handler: postLootCardController
     });
 
 }

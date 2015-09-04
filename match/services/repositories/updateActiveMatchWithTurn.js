@@ -4,7 +4,7 @@ const {
     TECH_DOMAIN_MONGOLAB_URI
 } = process.env;
 
-export default function updateActiveMatch(match) {
+export default function updateActiveMatchWithTurn(match) {
     const { users, nextTurn } = match;
 
     // Find out user ID whose turn it originally was (nextTurn has been modified). Used in the update where condition.
