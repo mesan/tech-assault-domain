@@ -1,6 +1,6 @@
 import battleService from '../battleService';
 
-export default function turnPerformance(userId, turn, pdb) {
+export default function turnPerformance(userId, turn) {
 
     const { cardId, cardPosition, actionType } = turn;
 
@@ -27,7 +27,7 @@ export default function turnPerformance(userId, turn, pdb) {
             return match;
         },
 
-        performAction(match) {
+        performPlayerAction(match) {
             // Calculate events.
             const { board, cards } = match;
 
@@ -89,6 +89,12 @@ export default function turnPerformance(userId, turn, pdb) {
             return match;
         },
 
+        setMatchFinishedStateUnconditionally(match) {
+            match.finished = true;
+
+            return match;
+        },
+
         setMatchWinner(match) {
             if (!match.finished) {
                 return match;
@@ -121,22 +127,52 @@ export default function turnPerformance(userId, turn, pdb) {
 
             if (score1 !== score2) {
                 const winnerIndex = score1 > score2 ? 0 : 1;
-                const loserIndex = winnerIndex === 0 ? 1 : 0;
                 const winningUserId = users[winnerIndex].id;
                 const originalPrimaryDeck = originalPrimaryDecks[winnerIndex];
 
+                // Loop through all cards on the board and filter out all cards not belonging to winner and which the
+                // winner not already owned before the match.
                 cardsToLoot = cards
                     .filter(card => card.owner === winningUserId && originalPrimaryDeck.indexOf(card.id) === -1)
                     .map(card => card.id);
-
-                // If winner gets a perfect victory, he automatically gets the loser's entire primary deck!
-                if (score[loserIndex] === 0) {
-                    cardsLooted = originalPrimaryDecks[loserIndex];
-                }
             }
 
             match.cardsToLoot = cardsToLoot;
-            match.cardsLooted = cardsLooted;
+
+            return match;
+        },
+
+        lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot(match) {
+            const { primaryDecks, score, originalPrimaryDecks } = match;
+            const [ score1, score2 ] = score;
+            const [ primaryDeck1, primaryDeck2 ] = primaryDecks;
+            const matchFinished = primaryDeck1.length === 0 && primaryDeck2.length === 0;
+
+            const loserIndex = score1 > score2 ? 1 : 0;
+
+            if (matchFinished) {
+                if (score[loserIndex] === 0) {
+                    // If winner gets a perfect victory, he automatically gets the loser's entire primary deck!
+                    match.cardsLooted = originalPrimaryDecks[loserIndex];
+                } else if (match.cardsToLoot.length === 1) {
+                    // If winner can loot only one card, he will automatically loot it for sake of convenience.
+                    match.cardsLooted = match.cardsToLoot;
+                }
+            }
+
+            return match;
+        },
+
+        setMatchToInactiveIfCardsHaveBeenLooted(match) {
+            if (match.cardsLooted && match.cardsLooted.length > 0) {
+                match.active = false;
+            }
+
+            return match;
+        },
+
+            setTurnTimedOut(match) {
+            match.turnTimedOut = true;
 
             return match;
         },
