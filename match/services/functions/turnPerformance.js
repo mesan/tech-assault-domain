@@ -146,11 +146,14 @@ export default function turnPerformance(userId, turn) {
             const { primaryDecks, score, originalPrimaryDecks } = match;
             const [ score1, score2 ] = score;
             const [ primaryDeck1, primaryDeck2 ] = primaryDecks;
-            const matchFinished = primaryDeck1.length === 0 && primaryDeck2.length === 0;
+
+            if (score1 === score2) {
+                return match;
+            }
 
             const loserIndex = score1 > score2 ? 1 : 0;
 
-            if (matchFinished) {
+            if (match.finished) {
                 if (score[loserIndex] === 0) {
                     // If winner gets a perfect victory, he automatically gets the loser's entire primary deck!
                     match.cardsLooted = originalPrimaryDecks[loserIndex];
