@@ -15,14 +15,17 @@ export default {
         let gameboard = gameBoard(board, cards);
         let events = [];
 
-        let opposingCardLocation = gameboard.findConnectedCards(cardPosition).next();
-        while(opposingCardLocation.done !== true) {
+        let connectedOpposingCard = gameboard.findConnectedCards(cardPosition);
+        let opposingCardLocation = connectedOpposingCard.next();
+        let battleResult;
+
+        while(hasMoreConnectedOpposingCards(opposingCardLocation) && isPlayerWinnerOfBattle(battleResult)) {
             // Battle and store events
-            events = events.concat(performBattle(gameboard, placedCard, cardPosition, opposingCardLocation.value));
+            battleResult = performBattle(gameboard, placedCard, cardPosition, opposingCardLocation.value);
+            events = events.concat(battleResult.events);
 
             // Find next opposing card to battle
-            opposingCardLocation = gameboard.findConnectedCards(cardPosition).next();
-            console.log(opposingCardLocation);
+            opposingCardLocation = connectedOpposingCard.next();
         }
 
         return { cards, events };
@@ -34,10 +37,11 @@ function performBattle (gameboard, playerCard, playerCardPosition, opposingCardL
     let opposingCard = opposingCardLocation.card;
     let opposingCardPosition = opposingCardLocation.gameBoardIndex;
     let playerCardArrowIndex = opposingCardLocation.playerCardArrowIndex;
+    let battleResult;
 
     if (isOpposingCardPointingToPlayer(playerCardArrowIndex, opposingCard)) {
         // Do battle
-        let battleResult = battle(playerCard, opposingCard);
+        battleResult = battle(playerCard, opposingCard);
 
         // Find all opponent cards connected by arrows to the opposing card.
         // These will be awarded as combos if the player wins the battle.
@@ -55,17 +59,43 @@ function performBattle (gameboard, playerCard, playerCardPosition, opposingCardL
         // Generates a takeover for the player
         let takeoverEvent = battleEventsCreator.createTakeoverEvent(opposingCard.id, opposingCardPosition, playerCard.owner);
 
-        events = events.concat(takeoverEvent);
-        //events.push(takeoverEvent);
+        events.push(takeoverEvent);
     }
-
-    console.log(events);
 
     // Update owner on cards based on takeOver events
     events.filter(event => event.type === TAKEOVER_EVENT)
           .forEach(takeover => gameboard.updateOwnerOnCard(takeover.cardId, takeover.newOwner));
 
-    return events;
+    return {
+        result: battleResult,
+        events: events
+    };
+};
+
+function hasMoreConnectedOpposingCards (opposingCardLocation) {
+    return opposingCardLocation.done !== true;
+};
+
+function isPlayerWinnerOfBattle (battleResult) {
+
+    // No battle has happened yet
+    if (typeof battleResult === 'undefined') {
+        return true;
+    }
+
+    // Opposing card is not pointing back.
+    if (typeof battleResult.result === 'undefined') {
+        return false;
+    }
+
+    // Player lost the battle
+    if (battleResult.result.winner !== battleResult.result.attacker.owner) {
+        return false;
+    }
+
+    // Player won the battle
+    return true;
+
 };
 
 function battle(playerCard, opponentCard) {
