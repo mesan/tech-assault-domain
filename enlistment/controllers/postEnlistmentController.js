@@ -1,9 +1,9 @@
 import enlistmentService from '../services/enlistmentService';
 
 export default function postEnlistmentController(request, reply) {
-    let userToken = request.params.userToken;
+    const { userId, userToken } = request.params;
 
-    enlistmentService.enlistPlayer(userToken)
+    enlistmentService.enlistPlayer(userId, userToken)
         .then(reply)
         .catch((err) => {
             console.log(err.stack);

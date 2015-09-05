@@ -5,7 +5,7 @@ import getMatchesController from './controllers/getMatchesController';
 export default function playerEndpoints(server) {
     server.route({
         method: 'POST',
-        path: '/enlistments/{userToken}',
+        path: '/enlistments/{userId}/{userToken}',
         handler: postEnlistmentController
     });
 
