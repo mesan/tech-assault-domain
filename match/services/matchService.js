@@ -176,23 +176,22 @@ export default {
             } = turnValidation(userId, {});
 
         const {
-            setMatchToInactive
-            } = lootPerformance(userId, {});
-
-        const {
             setMatchFinishedStateUnconditionally,
             setCardsToLoot,
             lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot,
-            setTurnTimedOut
+            setTurnTimedOut,
+            setMatchWinner,
+            setMatchToInactiveIfCardsHaveBeenLooted
             } = turnPerformance(userId, {});
 
         return getActiveMatch(userId)
             .then(validateActiveMatchExists)
             .then(validatePlayerTurn)
-            .then(setMatchToInactive)
             .then(setMatchFinishedStateUnconditionally)
             .then(setCardsToLoot)
             .then(lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot)
+            .then(setMatchToInactiveIfCardsHaveBeenLooted)
+            .then(setMatchWinner)
             .then(setTurnTimedOut)
             .then(updateActiveMatchWithTimeoutAndCardsToLoot)
             .then(updatePlayerDecksIfCardsAreLooted);
