@@ -52,7 +52,7 @@ function performBattle (gameboard, playerCard, playerCardPosition, opposingCardL
     else {
         // Opposing card is not pointing back at player card.
         // Generates a takeover for the player
-        let takeoverEvent = battleEventsCreator.createTakeoverEvent(opposingCard, opposingCardPosition, playerCard.owner);
+        let takeoverEvent = battleEventsCreator.createTakeoverEvent(opposingCard.id, opposingCardPosition, playerCard.owner);
         events.push(takeoverEvent);
     }
 
