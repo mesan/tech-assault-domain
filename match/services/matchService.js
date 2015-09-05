@@ -1,5 +1,6 @@
 import uuid from 'node-uuid';
 import pdb from '../../util/pdb';
+import tap from '../../util/tap';
 
 import boardService from '../../board/services/boardService';
 import playerDeckService from '../../player/services/playerPrimaryDeckService';
@@ -8,7 +9,8 @@ import battleService from './battleService';
 import getActiveMatch from './repositories/getActiveMatch';
 import updateActiveMatchWithTurn from './repositories/updateActiveMatchWithTurn';
 import updateActiveMatchByWinner from './repositories/updateActiveMatchByWinner';
-import updatePlayerDecks from './repositories/updatePlayerDecks';
+import updateActiveMatchWithTimeoutAndCardsToLoot from './repositories/updateActiveMatchWithTimeoutAndCardsToLoot';
+import updatePlayerDecksIfCardsAreLooted from './repositories/updatePlayerDecksIfCardsAreLooted';
 
 import turnPerformance from './functions/turnPerformance';
 import matchValidation from './functions/matchValidation';
@@ -107,14 +109,16 @@ export default {
 
         const {
             placeCardOnBoard,
-            performAction,
+            performPlayerAction,
             recalculateScore,
             toggleNextTurn,
             setMatchFinishedState,
             setMatchWinner,
             setCardsToLoot,
-            setMatchToInactiveIfDraw
-            } = turnPerformance(userId, turn, pdb);
+            lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot,
+            setMatchToInactiveIfDraw,
+            setMatchToInactiveIfCardsHaveBeenLooted
+            } = turnPerformance(userId, turn);
 
         return getActiveMatch(userId)
             .then(validateActiveMatchExists)
@@ -122,14 +126,17 @@ export default {
             .then(validateCard)
             .then(validatePosition)
             .then(placeCardOnBoard)
-            .then(performAction)
+            .then(performPlayerAction)
             .then(recalculateScore)
             .then(toggleNextTurn)
             .then(setMatchFinishedState)
             .then(setMatchWinner)
             .then(setCardsToLoot)
+            .then(lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot)
+            .then(setMatchToInactiveIfCardsHaveBeenLooted)
             .then(setMatchToInactiveIfDraw)
-            .then(updateActiveMatchWithTurn);
+            .then(updateActiveMatchWithTurn)
+            .then(updatePlayerDecksIfCardsAreLooted);
     },
 
     performLoot(userId, loot) {
@@ -156,6 +163,38 @@ export default {
             .then(setCardToLoot)
             .then(setMatchToInactive)
             .then(updateActiveMatchByWinner)
-            .then(updatePlayerDecks);
+            .then(updatePlayerDecksIfCardsAreLooted);
+    },
+
+    timeOutTurn(userId) {
+        const {
+            validateActiveMatchExists
+            } = matchValidation();
+
+        const {
+            validatePlayerTurn,
+            } = turnValidation(userId, {});
+
+        const {
+            setMatchToInactive
+            } = lootPerformance(userId, {});
+
+        const {
+            setMatchFinishedStateUnconditionally,
+            setCardsToLoot,
+            lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot,
+            setTurnTimedOut
+            } = turnPerformance(userId, {});
+
+        return getActiveMatch(userId)
+            .then(validateActiveMatchExists)
+            .then(validatePlayerTurn)
+            .then(setMatchToInactive)
+            .then(setMatchFinishedStateUnconditionally)
+            .then(setCardsToLoot)
+            .then(lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot)
+            .then(setTurnTimedOut)
+            .then(updateActiveMatchWithTimeoutAndCardsToLoot)
+            .then(updatePlayerDecksIfCardsAreLooted);
     }
 };

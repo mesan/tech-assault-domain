@@ -4,7 +4,11 @@ const {
     TECH_DOMAIN_MONGOLAB_URI
     } = process.env;
 
-export default function updatePlayerDecks(match) {
+export default function updatePlayerDecksIfCardsAreLooted(match) {
+    if (!match.cardsLooted || match.cardsLooted.length === 0) {
+        return match;
+    }
+
     const { users, cardsLooted, winner, cards } = match;
 
     const winnerIndex = users.findIndex(user => user.id === winner);
