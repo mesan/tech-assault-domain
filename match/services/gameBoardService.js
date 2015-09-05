@@ -13,62 +13,75 @@ export default function gameBoard (board, cards) {
     const TILES_ON_BOARD = board.length;
     const BOARD_SIZE = Math.sqrt(board.length);
 
+    // Lookup object with cards indexed by cardId
     let cardsLookup = {};
     cards.forEach(function (card){
         cardsLookup[card.id] = card;
     });
 
     return {
-        toCoords (index) {
-            if (index < 0 || index >= TILES_ON_BOARD) {
-                return undefined;
-            }
-
-            let x = index % BOARD_SIZE;
-            let y = Math.floor(index / BOARD_SIZE);
-
-            return [x, y];
-        },
-
         updateOwnerOnCard(cardId, newOwner) {
-            console.log("CardId: " + cardId);
-
-            let a = cardsLookup[cardId];
-            a.owner = newOwner;
-            cardsLookup[cardId] = a;
-
-            console.log("Oppdaterer kort " + a.name);
+            cardsLookup[cardId].owner = newOwner;
         },
 
-        find (index) {
-            let cardId = board[index];
+        *findConnectedCards (cardIndexOnBoard) {
+            let cardId = board[cardIndexOnBoard];
             let card = cardsLookup[cardId];
             let arrowPositions = this.readArrowPositionsOnCard(card);
             let arrowCounter = 0;
 
             for (;arrowCounter < arrowPositions.length; arrowCounter++) {
                 let arrowIndex = arrowPositions[arrowCounter];
-                let coords = this.coordinateForTileArrowIsPointingTo(index, arrowIndex);
+                let coords = this.coordinateArrowIsPointingTo(cardIndexOnBoard, arrowIndex);
 
                 let indexToCheck = toIndex([coords[0], coords[1]]);
 
                 if (this.isArrowPointingToEnemyCard(card.owner, indexToCheck)) {
-                    return {
-                        boardIndex: indexToCheck,
-                        arrowIndex: arrowIndex,
+                    yield {
+                        gameBoardIndex: indexToCheck,
+                        playerCardArrowIndex: arrowIndex,
                         card: cardsLookup[board[indexToCheck]]
                     };
                 }
             }
+        },
 
-            return true;
+        findOpposingCardsPointedToBy (cardPosition, pointsToPlayerName) {
+            let cardId = board[cardPosition];
+            let card = cardsLookup[cardId];
+            let arrowPositions = this.readArrowPositionsOnCard(card);
+            let arrowCounter = 0;
 
-           /* return {
-                next: function () {
+            let connectedCards = [];
 
+            for (;arrowCounter < arrowPositions.length; arrowCounter++) {
+                let arrowIndex = arrowPositions[arrowCounter];
+                let coords = this.coordinateArrowIsPointingTo(cardPosition, arrowIndex);
+
+                let indexToCheck = toIndex([coords[0], coords[1]]);
+
+                if (this.isArrowPointingToCardOwnedBy(pointsToPlayerName, indexToCheck)) {
+                    console.log(cardsLookup[board[indexToCheck]]);
+
+                    connectedCards.push({
+                        boardIndex: indexToCheck,
+                        arrowIndex: arrowIndex,
+                        card: cardsLookup[board[indexToCheck]]
+                    });
                 }
-            }*/
+            }
 
+            return connectedCards;
+        },
+
+        isArrowPointingToCardOwnedBy(owner, index) {
+            if (typeof index === 'undefined' || typeof board[index] !== 'string') {
+                return false;
+            }
+
+            let card = cardsLookup[board[index]];
+
+            return owner === card.owner ? true : false;
         },
 
         isArrowPointingToEnemyCard(player, index) {
@@ -81,8 +94,8 @@ export default function gameBoard (board, cards) {
             return player === card.owner ? false : true;
         },
 
-        coordinateForTileArrowIsPointingTo(cardIndex, arrowIndex) {
-            let coords = this.toCoords(cardIndex);
+        coordinateArrowIsPointingTo(cardIndex, arrowIndex) {
+            let coords = toCoords(cardIndex);
 
             let x = coords[0] + NEIGHBORS[arrowIndex].x;
             let y = coords[1] + NEIGHBORS[arrowIndex].y;
@@ -102,127 +115,6 @@ export default function gameBoard (board, cards) {
 
             return arrowPositions;
         },
-
-        findOpposingCardsPointedToBy (playerCardIndex) {
-            let cardId = board[playerCardIndex];
-            let card = cardsLookup[cardId];
-
-            console.log("0000000000000000000000000000000");
-            console.log(card);
-            console.log("0000000000000000000000000000000");
-
-            let arrowPositions = this.readArrowPositionsOnCard(card);
-            let arrowCounter = 0;
-
-            let lala = [];
-            for (;arrowCounter < arrowPositions.length; arrowCounter++) {
-                let arrowIndex = arrowPositions[arrowCounter];
-                let coords = this.coordinateForTileArrowIsPointingTo(playerCardIndex, arrowIndex);
-
-                console.log("111111111111111111111111111");
-                console.log(coords);
-                console.log("111111111111111111111111111");
-
-                let indexToCheck = toIndex([coords[0], coords[1]]);
-
-                if (this.isArrowPointingToEnemyCard(card.owner, indexToCheck)) {
-                    console.log(cardsLookup[board[indexToCheck]]);
-
-                    lala.push({
-                        boardIndex: indexToCheck,
-                        arrowIndex: arrowIndex,
-                        card: cardsLookup[board[indexToCheck]]
-                    });
-                }
-            }
-
-            return lala;
-
-/*
-
-
-
-            let arrowLength = playerCard.arrows.length;
-            let arrowIndexPosition = 0;
-            let arrowPositions = [];
-            let arrows = playerCard.arrows;
-            let coords = this.toCoords(index);
-
-            for (;arrowIndexPosition < arrowLength; arrowIndexPosition++) {
-                if (arrows[arrowIndexPosition] === 1) {
-                    arrowPositions.push(arrowIndexPosition);
-                }
-            }
-
-            let lala = [];
-            for (let l = 0; l < arrowPositions.length; l++) {
-                let pos = arrowPositions[l];
-                let x = coords[0] + NEIGHBORS[pos].x;
-                let y = coords[1] + NEIGHBORS[pos].y;
-
-                let index = toIndex([x, y]);
-                if (typeof index !== 'undefined' && typeof board[index] === 'string') {
-                    let card = cardsLookup[board[index]];
-
-                    if (playerCard.owner !== card.owner) {
-                        cards.push({
-                            boardIndex: index,
-                            arrowIndex: pos,
-                            card: card
-                        });
-                    }
-                }
-            }
-
-            return lala;*/
-        },
-
-     /*   findBattlingCards (playerCard, index) {
-
-            let res = this.findOpposingCardsPointedToBy(playerCard, index);
-            this.updateOwnerOnCard("0afb4577-15b8-427d-b9de-1383389d1212", playerCard.owner);
-
-
-            while (res.next().value) {
-                console.log("Found connected card!");
-            }
-
-
-            this.playerCard = playerCard;
-            let arrows = playerCard.arrows;
-            let arrowLength = playerCard.arrows.length;
-            let arrowIndexPosition = 0;
-            let coords = this.toCoords(index);
-
-            let arrowPositions = [];
-
-            for (;arrowIndexPosition < arrowLength; arrowIndexPosition++) {
-                if (arrows[arrowIndexPosition] === 1) {
-                    arrowPositions.push(arrowIndexPosition);
-                }
-            }
-
-            let neighbouringCards = [];
-            arrowPositions.forEach(function(value) {
-                let x = coords[0] + NEIGHBORS[value].x;
-                let y = coords[1] + NEIGHBORS[value].y;
-
-                let index = toIndex([x, y]);
-
-                if (typeof index !== 'undefined' && typeof board[index] === 'string') {
-                    neighbouringCards.push({
-                        boardIndex: index,
-                        arrowIndex: value,
-                        card: cardsLookup[board[index]]
-                    });
-                }
-            });
-
-            neighbouringCards = neighbouringCards.filter(removeCardsOwnedByPlayer, this);
-
-            return neighbouringCards;
-        }
-*/
     }
 
     function toIndex (coords) {
@@ -251,5 +143,17 @@ export default function gameBoard (board, cards) {
 
         return valid;
     }
+
+    function toCoords (index) {
+        if (index < 0 || index >= TILES_ON_BOARD) {
+            return undefined;
+        }
+
+        let x = index % BOARD_SIZE;
+        let y = Math.floor(index / BOARD_SIZE);
+
+        return [x, y];
+    }
+
 }
 

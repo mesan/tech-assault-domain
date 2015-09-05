@@ -1,4 +1,3 @@
-import engine from '../gameEngine';
 import battleService from '../../match/services/battleService';
 
 export default function postBattleSimulatorController(request, reply) {
