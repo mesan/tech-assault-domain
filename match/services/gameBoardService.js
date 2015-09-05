@@ -19,17 +19,15 @@ export default function gameBoard (board, cards) {
         cardsLookup[card.id] = card;
     });
 
-    console.log(cards);
-
     return {
         updateOwnerOnCard(cardId, newOwner) {
-            console.log("Oppdaterer kort " + cardId + " til " + newOwner);
             cardsLookup[cardId].owner = newOwner;
         },
 
         *findConnectedCards (cardIndexOnBoard) {
             let cardId = board[cardIndexOnBoard];
             let card = cardsLookup[cardId];
+            let player = card.owner;
             let arrowPositions = this.readArrowPositionsOnCard(card);
             let arrowCounter = 0;
 
@@ -39,7 +37,7 @@ export default function gameBoard (board, cards) {
 
                 let indexToCheck = toIndex([coords[0], coords[1]]);
 
-                if (this.isArrowPointingToEnemyCard(card.owner, indexToCheck)) {
+                if (this.isArrowPointingToEnemyCard(player, indexToCheck)) {
                     yield {
                         gameBoardIndex: indexToCheck,
                         playerCardArrowIndex: arrowIndex,
@@ -63,7 +61,7 @@ export default function gameBoard (board, cards) {
 
                 let indexToCheck = toIndex([coords[0], coords[1]]);
 
-                if (this.isArrowPointingToCardOwnedBy(pointsToPlayerName, indexToCheck)) {s
+                if (this.isArrowPointingToCardOwnedBy(pointsToPlayerName, indexToCheck)) {
                     connectedCards.push({
                         boardIndex: indexToCheck,
                         arrowIndex: arrowIndex,
