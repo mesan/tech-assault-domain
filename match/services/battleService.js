@@ -85,7 +85,7 @@ function isPlayerWinnerOfBattle (battleResult) {
 
     // Opposing card is not pointing back.
     if (typeof battleResult.result === 'undefined') {
-        return false;
+        return true;
     }
 
     // Player lost the battle
