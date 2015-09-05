@@ -70,6 +70,9 @@ export default function gameBoard (board, cards) {
                 }
             }
 
+            console.log("POINTS TO: ");
+            console.log(connectedCards);
+
             return connectedCards;
         },
 

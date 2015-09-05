@@ -43,14 +43,15 @@ function performBattle (gameboard, playerCard, playerCardPosition, opposingCardL
         // Do battle
         battleResult = battle(playerCard, opposingCard);
 
-        // Find all opponent cards connected by arrows to the opposing card.
-        // These will be awarded as combos if the player wins the battle.
-        let cardsConnectedToOpposingPlayerCard = gameboard.findOpposingCardsPointedToBy(
-            opposingCardPosition, opposingCardLocation.card.owner);
+        let looser = findLoosingPlayerAndPosition(battleResult, playerCardPosition, opposingCardPosition);
+
+        //let loosingCardPosition = (battleResult.winner === playerCard.owner) ? opposingCardPosition : playerCardPosition;
+        let connectedCards = gameboard.findOpposingCardsPointedToBy(
+            looser.loosingCardPosition, looser.loosingPlayerName);
 
         // create events
         let battleEvents = battleEventsCreator.createBattleEvent(battleResult, playerCardPosition, opposingCardPosition);
-        let comboEvents = battleEventsCreator.createComboTakeovers(battleResult, cardsConnectedToOpposingPlayerCard);
+        let comboEvents = battleEventsCreator.createComboTakeovers(battleResult, connectedCards);
 
         events = events.concat(battleEvents, comboEvents);
     }
@@ -72,6 +73,24 @@ function performBattle (gameboard, playerCard, playerCardPosition, opposingCardL
     };
 };
 
+function findLoosingPlayerAndPosition(battleResult, playerCardPosition, opposingCardPosition) {
+    let loosingCardPosition;
+    let loosingPlayerName;
+    if (battleResult.winner === battleResult.attacker.owner) {
+        loosingCardPosition = opposingCardPosition;
+        loosingPlayerName = battleResult.defender.owner;
+    }
+    else {
+        loosingCardPosition = playerCardPosition;
+        loosingPlayerName = battleResult.attacker.owner;
+    }
+
+    return {
+        loosingCardPosition,
+        loosingPlayerName
+    }
+}
+
 function hasMoreConnectedOpposingCards (opposingCardLocation) {
     return opposingCardLocation.done !== true;
 };
@@ -85,7 +104,7 @@ function isPlayerWinnerOfBattle (battleResult) {
 
     // Opposing card is not pointing back.
     if (typeof battleResult.result === 'undefined') {
-        return true;
+        return false;
     }
 
     // Player lost the battle

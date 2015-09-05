@@ -45,20 +45,18 @@ let battleEventsService = {
     },
 
     createComboTakeovers(battleResult, connectedCards) {
-        let player = battleResult.attacker.owner;
-        let opponent = battleResult.defender.owner;
-        let events = [];
+        let player = battleResult.winner;
 
-        if (battleResult.winner === opponent) {
-            return events;
-        }
-
-        events = connectedCards.map((combo) => {
+        let events = connectedCards.map((combo) => {
             return this.createTakeoverEvent(combo.card.id, combo.boardIndex, player)
         });
 
         return events;
     }
+
+}
+
+function findWinner() {
 
 }
 
