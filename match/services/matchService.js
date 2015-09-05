@@ -112,7 +112,8 @@ export default {
             toggleNextTurn,
             setMatchFinishedState,
             setMatchWinner,
-            setCardsToLoot
+            setCardsToLoot,
+            setMatchToInactiveIfDraw
             } = turnPerformance(userId, turn, pdb);
 
         return getActiveMatch(userId)
@@ -127,6 +128,7 @@ export default {
             .then(setMatchFinishedState)
             .then(setMatchWinner)
             .then(setCardsToLoot)
+            .then(setMatchToInactiveIfDraw)
             .then(updateActiveMatchWithTurn);
     },
 

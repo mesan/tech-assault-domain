@@ -96,7 +96,11 @@ export default function turnPerformance(userId, turn, pdb) {
 
             const { users, score } = match;
 
-            match.winner = score[0] > score[1] ? users[0].id : users[1].id;
+            match.winner = score[0] === score[1]
+                ? 'N/A'
+                : score[0] > score[1]
+                    ? users[0].id
+                    : users[1].id;
 
             return match;
         },
@@ -133,6 +137,14 @@ export default function turnPerformance(userId, turn, pdb) {
 
             match.cardsToLoot = cardsToLoot;
             match.cardsLooted = cardsLooted;
+
+            return match;
+        },
+
+        setMatchToInactiveIfDraw(match) {
+            if (match.finished && match.winner === 'N/A') {
+                match.active = false;
+            }
 
             return match;
         }
