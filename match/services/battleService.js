@@ -18,10 +18,11 @@ export default {
         let opposingCardLocation = gameboard.findConnectedCards(cardPosition).next();
         while(opposingCardLocation.done !== true) {
             // Battle and store events
-            events = performBattle(gameboard, placedCard, cardPosition, opposingCardLocation.value);
+            events = events.concat(performBattle(gameboard, placedCard, cardPosition, opposingCardLocation.value));
 
             // Find next opposing card to battle
             opposingCardLocation = gameboard.findConnectedCards(cardPosition).next();
+            console.log(opposingCardLocation);
         }
 
         return { cards, events };
@@ -53,8 +54,12 @@ function performBattle (gameboard, playerCard, playerCardPosition, opposingCardL
         // Opposing card is not pointing back at player card.
         // Generates a takeover for the player
         let takeoverEvent = battleEventsCreator.createTakeoverEvent(opposingCard.id, opposingCardPosition, playerCard.owner);
-        events.push(takeoverEvent);
+
+        events = events.concat(takeoverEvent);
+        //events.push(takeoverEvent);
     }
+
+    console.log(events);
 
     // Update owner on cards based on takeOver events
     events.filter(event => event.type === TAKEOVER_EVENT)

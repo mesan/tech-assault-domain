@@ -23,9 +23,9 @@ let battleEventsService = {
         let battleEvent = {
             type: BATTLE_EVENT,
             cardId: battleResult.attacker.id,
-            cardPosition: battleResult.attackerCardPosition,
+            cardPosition: playerCardPosition,
             opposingCardId: battleResult.defender.id,
-            opposingCardPosition: battleResult.defenderCardPosition,
+            opposingCardPosition: opposingCardPosition,
             cardPower: battleResult.attackValue,
             opposingCardPower: battleResult.defenseValue
         }

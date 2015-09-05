@@ -19,8 +19,11 @@ export default function gameBoard (board, cards) {
         cardsLookup[card.id] = card;
     });
 
+    console.log(cards);
+
     return {
         updateOwnerOnCard(cardId, newOwner) {
+            console.log("Oppdaterer kort " + cardId + " til " + newOwner);
             cardsLookup[cardId].owner = newOwner;
         },
 
@@ -60,9 +63,7 @@ export default function gameBoard (board, cards) {
 
                 let indexToCheck = toIndex([coords[0], coords[1]]);
 
-                if (this.isArrowPointingToCardOwnedBy(pointsToPlayerName, indexToCheck)) {
-                    console.log(cardsLookup[board[indexToCheck]]);
-
+                if (this.isArrowPointingToCardOwnedBy(pointsToPlayerName, indexToCheck)) {s
                     connectedCards.push({
                         boardIndex: indexToCheck,
                         arrowIndex: arrowIndex,
