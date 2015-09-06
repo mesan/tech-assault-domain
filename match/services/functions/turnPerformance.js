@@ -145,7 +145,6 @@ export default function turnPerformance(userId, turn) {
         lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot(match) {
             const { primaryDecks, score, originalPrimaryDecks } = match;
             const [ score1, score2 ] = score;
-            const [ primaryDeck1, primaryDeck2 ] = primaryDecks;
 
             if (score1 === score2) {
                 return match;
@@ -154,10 +153,8 @@ export default function turnPerformance(userId, turn) {
             const loserIndex = score1 > score2 ? 1 : 0;
 
             if (match.finished) {
-                if (score[loserIndex] === 0) {
-                    // If winner gets a perfect victory, he automatically gets the loser's entire primary deck!
-                    match.cardsLooted = originalPrimaryDecks[loserIndex];
-                } else if (match.cardsToLoot.length === 1) {
+                if (score[loserIndex] === 0 || match.cardsToLoot.length === 1) {
+                    // If winner gets a perfect victory, he automatically gets all the loser's cards!
                     // If winner can loot only one card, he will automatically loot it for sake of convenience.
                     match.cardsLooted = match.cardsToLoot;
                 }
