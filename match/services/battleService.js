@@ -17,12 +17,13 @@ export default {
 
         let connectedOpposingCard = gameboard.findConnectedCards(cardPosition);
         let opposingCardLocation = connectedOpposingCard.next();
-        let battleResult;
+        let player = placedCard.owner;
+        let battleOutcome = {};
 
-        while(hasMoreConnectedOpposingCards(opposingCardLocation) && isPlayerWinnerOfBattle(battleResult)) {
+        while(hasMoreConnectedOpposingCards(opposingCardLocation) && isPlayerWinnerOfBattle(player, battleOutcome.result)) {
             // Battle and store events
-            battleResult = performBattle(gameboard, placedCard, cardPosition, opposingCardLocation.value);
-            events = events.concat(battleResult.events);
+            battleOutcome = performBattle(gameboard, placedCard, cardPosition, opposingCardLocation.value);
+            events = events.concat(battleOutcome.events);
 
             // Find next opposing card to battle
             opposingCardLocation = connectedOpposingCard.next();
@@ -95,26 +96,12 @@ function hasMoreConnectedOpposingCards (opposingCardLocation) {
     return opposingCardLocation.done !== true;
 };
 
-function isPlayerWinnerOfBattle (battleResult) {
-
-    // No battle has happened yet
-    if (typeof battleResult === 'undefined') {
+function isPlayerWinnerOfBattle (player, battleOutcome) {
+    if (typeof battleOutcome === 'undefined') {
         return true;
     }
 
-    // Opposing card is not pointing back.
-    if (typeof battleResult.result === 'undefined') {
-        return false;
-    }
-
-    // Player lost the battle
-    if (battleResult.result.winner !== battleResult.result.attacker.owner) {
-        return false;
-    }
-
-    // Player won the battle
-    return true;
-
+    return (player === battleOutcome.winner) ? true : false;
 };
 
 function battle(playerCard, opponentCard) {
