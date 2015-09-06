@@ -9,6 +9,7 @@ import battleService from './battleService';
 import getActiveMatch from './repositories/getActiveMatch';
 import updateActiveMatchWithTurn from './repositories/updateActiveMatchWithTurn';
 import updateActiveMatchByWinner from './repositories/updateActiveMatchByWinner';
+import updateActiveMatchByUser from './repositories/updateActiveMatchByUser';
 import updateActiveMatchWithTimeoutAndCardsToLoot from './repositories/updateActiveMatchWithTimeoutAndCardsToLoot';
 import updatePlayerDecksIfCardsAreLooted from './repositories/updatePlayerDecksIfCardsAreLooted';
 
@@ -197,5 +198,24 @@ export default {
             .then(setMatchToInactiveIfNoCardsToLootOrCardsHaveBeenLooted)
             .then(updateActiveMatchWithTimeoutAndCardsToLoot)
             .then(updatePlayerDecksIfCardsAreLooted);
+    },
+
+    timeOutLooting(userId) {
+        const {
+            validateActiveMatchExists,
+            validateMatchIsFinished
+            } = matchValidation();
+
+        const {
+            setMatchToInactive,
+            setLootTimedOut,
+            } = lootPerformance(userId, {});
+
+        return getActiveMatch(userId)
+            .then(validateActiveMatchExists)
+            .then(validateMatchIsFinished)
+            .then(setMatchToInactive)
+            .then(setLootTimedOut)
+            .then(updateActiveMatchByUser);
     }
 };

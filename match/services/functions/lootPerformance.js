@@ -13,6 +13,12 @@ export default function lootPerformance(userId, loot) {
             match.active = false;
 
             return match;
+        },
+
+        setLootTimedOut(match) {
+            match.lootTimedOut = true;
+
+            return match;
         }
     };
 }
