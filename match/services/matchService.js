@@ -98,7 +98,8 @@ export default {
 
     performTurn(userId, turn) {
         const {
-            validateActiveMatchExists
+            validateActiveMatchExists,
+            validateMatchIsNotFinished
             } = matchValidation();
 
         const {
@@ -122,6 +123,7 @@ export default {
 
         return getActiveMatch(userId)
             .then(validateActiveMatchExists)
+            .then(validateMatchIsNotFinished)
             .then(validatePlayerTurn)
             .then(validateCard)
             .then(validatePosition)
