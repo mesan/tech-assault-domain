@@ -111,6 +111,17 @@ export default function turnPerformance(userId, turn) {
             return match;
         },
 
+        setMatchWinnerIfTimeout(match) {
+            const { users, nextTurn } = match;
+
+            const winnerIndex = users.findIndex(user => user.id !== nextTurn);
+            const winnerId = users[winnerIndex].id;
+
+            match.winner = winnerId;
+
+            return match;
+        },
+
         setCardsToLoot(match) {
             if (!match.finished) {
                 return match;
@@ -142,18 +153,33 @@ export default function turnPerformance(userId, turn) {
             return match;
         },
 
-        lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot(match) {
-            const { primaryDecks, score, originalPrimaryDecks } = match;
-            const [ score1, score2 ] = score;
+        setCardsToLootIfTimeout(match) {
+            const { users, cards, winner, originalPrimaryDecks } = match;
 
-            if (score1 === score2) {
+            const winnerIndex = users.findIndex(user => user.id === winner);
+            const winnerId = users[winnerIndex].id;
+            const winnerOriginalPrimaryDeck = originalPrimaryDecks[winnerIndex];
+
+            // Loop through all cards on the board and filter out all cards which the winner not already owned before
+            // the match.
+            match.cardsToLoot = cards
+                .filter(card => card.owner === winnerId && winnerOriginalPrimaryDeck.indexOf(card.id) === -1)
+                .map(card => card.id);
+
+            return match;
+        },
+
+        lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot(match) {
+            const { primaryDecks, score, originalPrimaryDecks, users, winner } = match;
+
+            if (typeof winner === 'undefined' || winner === 'N/A') {
                 return match;
             }
 
-            const loserIndex = score1 > score2 ? 1 : 0;
-
             if (match.finished) {
-                if (score[loserIndex] === 0 || match.cardsToLoot.length === 1) {
+                const loserIndex = users.findIndex(user => user.id !== winner);
+
+                if (score[loserIndex] === 0 || (match.cardsToLoot && match.cardsToLoot.length === 1)) {
                     // If winner gets a perfect victory, he automatically gets all the loser's cards!
                     // If winner can loot only one card, he will automatically loot it for sake of convenience.
                     match.cardsLooted = match.cardsToLoot;
@@ -163,15 +189,21 @@ export default function turnPerformance(userId, turn) {
             return match;
         },
 
-        setMatchToInactiveIfCardsHaveBeenLooted(match) {
-            if (match.cardsLooted && match.cardsLooted.length > 0) {
-                match.active = false;
+        setMatchToInactiveIfNoCardsToLootOrCardsHaveBeenLooted(match) {
+            if (match.finished) {
+                if (!match.cardsToLoot || match.cardsToLoot.length === 0) {
+                    match.active = false;
+                }
+
+                if (match.cardsLooted && match.cardsLooted.length > 0) {
+                    match.active = false;
+                }
             }
 
             return match;
         },
 
-            setTurnTimedOut(match) {
+        setTurnTimedOut(match) {
             match.turnTimedOut = true;
 
             return match;
@@ -181,6 +213,8 @@ export default function turnPerformance(userId, turn) {
             if (match.finished && match.winner === 'N/A') {
                 match.active = false;
             }
+
+            console.log('ifdraw');
 
             return match;
         }

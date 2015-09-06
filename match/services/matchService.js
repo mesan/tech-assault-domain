@@ -117,7 +117,7 @@ export default {
             setCardsToLoot,
             lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot,
             setMatchToInactiveIfDraw,
-            setMatchToInactiveIfCardsHaveBeenLooted
+            setMatchToInactiveIfNoCardsToLootOrCardsHaveBeenLooted
             } = turnPerformance(userId, turn);
 
         return getActiveMatch(userId)
@@ -133,7 +133,7 @@ export default {
             .then(setMatchWinner)
             .then(setCardsToLoot)
             .then(lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot)
-            .then(setMatchToInactiveIfCardsHaveBeenLooted)
+            .then(setMatchToInactiveIfNoCardsToLootOrCardsHaveBeenLooted)
             .then(setMatchToInactiveIfDraw)
             .then(updateActiveMatchWithTurn)
             .then(updatePlayerDecksIfCardsAreLooted);
@@ -177,22 +177,22 @@ export default {
 
         const {
             setMatchFinishedStateUnconditionally,
-            setCardsToLoot,
+            setCardsToLootIfTimeout,
             lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot,
             setTurnTimedOut,
-            setMatchWinner,
-            setMatchToInactiveIfCardsHaveBeenLooted
+            setMatchWinnerIfTimeout,
+            setMatchToInactiveIfNoCardsToLootOrCardsHaveBeenLooted
             } = turnPerformance(userId, {});
 
         return getActiveMatch(userId)
             .then(validateActiveMatchExists)
             .then(validatePlayerTurn)
-            .then(setMatchFinishedStateUnconditionally)
-            .then(setCardsToLoot)
-            .then(lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot)
-            .then(setMatchToInactiveIfCardsHaveBeenLooted)
-            .then(setMatchWinner)
             .then(setTurnTimedOut)
+            .then(setMatchFinishedStateUnconditionally)
+            .then(setMatchWinnerIfTimeout)
+            .then(setCardsToLootIfTimeout)
+            .then(lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot)
+            .then(setMatchToInactiveIfNoCardsToLootOrCardsHaveBeenLooted)
             .then(updateActiveMatchWithTimeoutAndCardsToLoot)
             .then(updatePlayerDecksIfCardsAreLooted);
     }
