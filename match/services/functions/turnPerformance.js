@@ -214,8 +214,6 @@ export default function turnPerformance(userId, turn) {
                 match.active = false;
             }
 
-            console.log('ifdraw');
-
             return match;
         }
     };
