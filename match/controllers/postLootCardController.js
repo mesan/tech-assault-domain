@@ -8,6 +8,6 @@ export default function postLootCardController(request, reply) {
         .then(reply)
         .catch(err => {
             console.error(err.stack);
-            reply(err);
+            reply({ error: err }).code(400);
         });
 }

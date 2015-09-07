@@ -11,5 +11,8 @@ export default function getActiveMatchController(request, reply) {
 
             return reply(activeMatch);
         })
-        .catch(err => { console.log(err.stack); reply(err); });
+        .catch(err => {
+            console.error(err.stack);
+            reply({ error: err }).code(400);
+        });
 }
