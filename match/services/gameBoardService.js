@@ -94,6 +94,7 @@ export default function gameBoard (board, cards) {
         },
 
         coordinateArrowIsPointingTo(cardIndex, arrowIndex) {
+
             let coords = toCoords(cardIndex);
 
             let x = coords[0] + NEIGHBORS[arrowIndex].x;
@@ -121,7 +122,7 @@ export default function gameBoard (board, cards) {
             return undefined;
         }
 
-        let index = coords[0] + (coords[1] * BOARD_SIZE);
+        let index = Math.floor(coords[0] + (coords[1] * BOARD_SIZE));
 
         return index;
     }
@@ -148,7 +149,7 @@ export default function gameBoard (board, cards) {
             return undefined;
         }
 
-        let x = index % BOARD_SIZE;
+        let x = Math.ceil(index % BOARD_SIZE);
         let y = Math.floor(index / BOARD_SIZE);
 
         return [x, y];
