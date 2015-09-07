@@ -6,6 +6,8 @@ const {
     TECH_DOMAIN_MONGOLAB_URI
 } = process.env;
 
+const deckSizeLowerLimit = 5;
+
 const playerPrimaryDeckService = {
 
     getPlayerPrimaryDeck(userId) {
@@ -13,36 +15,45 @@ const playerPrimaryDeckService = {
             .then(([db, collection]) => {
                 return collection.pfind({ userId }, { _id: 0}).limit(1).toArray();
             })
-            .then((playerPrimaryDecks) => {
-                if (playerPrimaryDecks.length === 0) {
-                    return randomBaseCardService.getRandomBaseCards(5)
+            .then((decks) => {
+                const hasDeck = decks.length > 0;
+
+                if (!hasDeck) {
+                    return randomBaseCardService.getRandomBaseCards(deckSizeLowerLimit)
                         .then((baseCards) => playerDeckService.createPlayerDeck(userId, baseCards))
                         .then(() => playerPrimaryDeckService.getPlayerPrimaryDeck(userId));
                 }
 
-                const playerPrimaryDeck = playerPrimaryDecks[0];
+                const deck = decks[0];
+                const deckSize = deck.deck.length;
 
-                if (typeof playerPrimaryDeck.deck === 'undefined') {
-                    playerPrimaryDeck.deck = [];
+                if (deckSize < deckSizeLowerLimit) {
+                    return randomBaseCardService.getRandomBaseCards(deckSizeLowerLimit - deckSize)
+                        .then((baseCards) => playerDeckService.updatePlayerDeck(userId, deck, baseCards))
+                        .then(() => playerPrimaryDeckService.getPlayerPrimaryDeck(userId));
                 }
 
-                if (typeof playerPrimaryDeck.primaryDeck === 'undefined') {
-                    playerPrimaryDeck.primaryDeck = [];
+                if (typeof deck.deck === 'undefined') {
+                    deck.deck = [];
                 }
 
-                let playerDeckById = playerPrimaryDeck.deck.reduce((playerDeckById, card) => {
+                if (typeof deck.primaryDeck === 'undefined') {
+                    deck.primaryDeck = [];
+                }
+
+                let playerDeckById = deck.deck.reduce((playerDeckById, card) => {
                     playerDeckById[card.id] = card;
                     return playerDeckById;
                 }, {});
 
-                let primaryDeck = playerPrimaryDeck.primaryDeck.map((cardId) => {
+                let primaryDeck = deck.primaryDeck.map((cardId) => {
                     return playerDeckById[cardId];
                 });
 
                 return {
-                    userId: playerPrimaryDeck.userId,
+                    userId: deck.userId,
                     primaryDeck,
-                    deck: playerPrimaryDeck.deck
+                    deck: deck.deck
                 };
             });
     },

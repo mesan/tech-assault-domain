@@ -3,7 +3,7 @@ import pdb from '../../util/pdb';
 import tap from '../../util/tap';
 
 import boardService from '../../board/services/boardService';
-import playerDeckService from '../../player/services/playerPrimaryDeckService';
+import playerPrimaryDeckService from '../../player/services/playerPrimaryDeckService';
 import battleService from './battleService';
 
 import getActiveMatch from './repositories/getActiveMatch';
@@ -59,8 +59,8 @@ export default {
         const finished = false;
 
         return Promise.all([
-            playerDeckService.getPlayerPrimaryDeck(userId1),
-            playerDeckService.getPlayerPrimaryDeck(userId2),
+            playerPrimaryDeckService.getPlayerPrimaryDeck(userId1),
+            playerPrimaryDeckService.getPlayerPrimaryDeck(userId2),
             pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'matches')])
             .then(([player1primaryDeck, player2primaryDeck, [db, collection]]) => {
 
