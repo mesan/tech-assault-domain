@@ -13,9 +13,11 @@ export default function updatePlayerScoresIfCardsAreLooted(match) {
 
     let playerOneId = users[0].id;
     let playerOneName = users[0].name;
+    let playerOneAvatar = users[0].avatar;
 
     let playerTwoId = users[1].id;
     let playerTwoName = users[1].name;
+    let playerTwoAvatar = users[1].avatar;
 
     let collection;
 
@@ -39,7 +41,8 @@ export default function updatePlayerScoresIfCardsAreLooted(match) {
                             {
                                 userId: playerOneId,
                                 playerName: playerOneName,
-                                score: playerOneScore
+                                score: playerOneScore,
+                                avatar: playerOneAvatar
                             },
                             { upsert: true }),
 
@@ -48,7 +51,8 @@ export default function updatePlayerScoresIfCardsAreLooted(match) {
                             {
                                 userId: playerTwoId,
                                 playerName: playerTwoName,
-                                score: playerTwoScore
+                                score: playerTwoScore,
+                                avatar: playerTwoAvatar
                             },
                             { upsert: true })
                     ]);
