@@ -11,7 +11,7 @@ const NEIGHBORS = [
 
 export default function gameBoard (board, cards) {
     const TILES_ON_BOARD = board.length;
-    const BOARD_SIZE = Math.sqrt(board.length);
+    const BOARD_SIZE = Math.round(Math.sqrt(TILES_ON_BOARD));
 
     // Lookup object with cards indexed by cardId
     let cardsLookup = {};
