@@ -6,9 +6,10 @@ export default function getRankingsController(request, reply) {
 
     pdb.connect(process.env.TECH_DOMAIN_MONGOLAB_URI, 'rankings')        
         .then(([db, collection]) => {
-            var player = collection.findOne( { player : userId }, { _id: 0 });
+            var player = collection.findOne( { userId : userId }, { _id: 0 });
+
             var rank = player.then((p) => {
-                return collection.pfind({ score: { $gt: p.score } }).count();
+                return collection.find({ score: { $gt: p.score } }).count();
             });
 
             return Promise.all([player, rank]);
