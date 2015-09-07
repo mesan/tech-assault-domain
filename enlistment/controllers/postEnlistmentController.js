@@ -7,6 +7,6 @@ export default function postEnlistmentController(request, reply) {
         .then(reply)
         .catch((err) => {
             console.log(err.stack);
-            reply(err);
+            reply(err).code(400);
         });
 }
