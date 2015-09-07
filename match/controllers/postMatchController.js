@@ -5,6 +5,8 @@ export default function postMatchController(request, reply) {
 
     matchService.createMatch(users)
         .then(reply)
-        .catch(console.error)
-        .catch(reply);
+        .catch(err => {
+            console.error(err.stack);
+            reply({ error: err }).code(400);
+        });
 }

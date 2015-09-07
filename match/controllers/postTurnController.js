@@ -8,6 +8,6 @@ export default function postTurnController(request, reply) {
         .then(reply)
         .catch(err => {
             console.error(err.stack);
-            reply({ error: err.message }).code(400);
+            reply({ error: err }).code(400);
         });
 }

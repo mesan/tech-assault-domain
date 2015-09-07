@@ -14,6 +14,6 @@ export default function getPlayerDeckController(request, reply) {
         })
         .catch((err) => {
             console.log(err.stack);
-            reply(err);
+            reply({ error: err }).code(400);
         });
 }
