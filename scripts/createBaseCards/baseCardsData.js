@@ -1,100 +1,121 @@
 export default [
     {
-        name: 'NodeJS',
-        image: 'assets/mesan.png',
-        attack: 3,
-        defense: 2,
-        arrows: [0, 1, 0, 0, 0, 0, 1, 1]
-    },
-    {
         name: 'Java',
-        image: 'assets/mesan.png',
+        image: 'assets/java.png',
         attack: 2,
         defense: 1,
         arrows: [1, 0, 0, 1, 0, 0, 1, 0]
     },
     {
-        name: 'PHP',
-        image: 'assets/mesan.png',
-        attack: 1,
-        defense: 2,
-        arrows: [0, 0, 1, 0, 1, 1, 0, 0]
-    },
-    {
         name: 'Ruby',
-        image: 'assets/mesan.png',
+        image: 'assets/ruby.png',
         attack: 2,
         defense: 2,
         arrows: [1, 1, 0, 0, 0, 0, 0, 0]
     },
     {
-        name: 'Ruby on Rails',
-        image: 'assets/mesan.png',
+        name: 'Windows',
+        image: 'assets/windows.png',
         attack: 3,
         defense: 2,
         arrows: [0, 0, 0, 1, 1, 0, 0, 1]
     },
     {
         name: 'Spring',
-        image: 'assets/mesan.png',
+        image: 'assets/spring.png',
         attack: 2,
         defense: 2,
-        arrows: [0, 0, 0, 0, 1, 0, 0, 1]
+        arrows: [0, 0, 1, 0, 1, 0, 0, 0]
     },
     {
         name: 'C#',
-        image: 'assets/mesan.png',
+        image: 'assets/csharp.png',
         attack: 2,
         defense: 1,
-        arrows: [1, 0, 1, 1, 0, 1, 0, 0]
+        arrows: [1, 0, 0, 0, 1, 1, 0, 0]
     },
     {
         name: 'NPM',
-        image: 'assets/mesan.png',
+        image: 'assets/npm.png',
         attack: 2,
         defense: 2,
-        arrows: [1, 0, 0, 1, 0, 1, 0, 0]
+        arrows: [0, 0, 0, 1, 0, 1, 0, 0]
     },
     {
         name: 'Python',
-        image: 'assets/mesan.png',
+        image: 'assets/python.png',
         attack: 1,
         defense: 2,
-        arrows: [1, 0, 1, 1, 0, 1, 0, 0]
+        arrows: [0, 1, 0, 1, 0, 0, 0, 1]
     },
     {
         name: 'Elixir',
-        image: 'assets/mesan.png',
+        image: 'assets/elixir.png',
         attack: 2,
         defense: 2,
-        arrows: [1, 1, 1, 1, 0, 1, 0, 0]
+        arrows: [0, 0, 1, 0, 0, 1, 0, 0]
     },
     {
         name: 'Angular',
-        image: 'assets/mesan.png',
+        image: 'assets/angular.png',
         attack: 3,
         defense: 1,
-        arrows: [0, 0, 0, 1, 0, 0, 0, 0]
+        arrows: [1, 0, 0, 1, 0, 1, 0, 0]
     },
     {
         name: 'React',
-        image: 'assets/mesan.png',
+        image: 'assets/react.png',
         attack: 4,
         defense: 2,
-        arrows: [1, 0, 1, 1, 0, 1, 0, 0]
+        arrows: [1, 0, 1, 0, 1, 0, 1, 0]
     },
     {
-        name: 'MVC',
+        name: 'Mesan',
         image: 'assets/mesan.png',
-        attack: 1,
-        defense: 1,
-        arrows: [0, 0, 1, 0, 0, 1, 0, 1]
+        attack: 4,
+        defense: 3,
+        arrows: [1, 1, 1, 1, 1, 1, 1, 1]
+    },
+    {
+        name: 'GitHub',
+        image: 'assets/github.png',
+        attack: 2,
+        defense: 2,
+        arrows: [1, 1, 1, 0, 0, 0, 0, 1]
     },
     {
         name: 'Flux',
-        image: 'assets/mesan.png',
+        image: 'assets/flux.png',
         attack: 2,
         defense: 2,
         arrows: [0, 0, 0, 1, 1, 0, 0, 1]
+    },
+    {
+        name: 'NodeJS',
+        image: 'assets/nodejs.png',
+        attack: 4,
+        defense: 1,
+        arrows: [0, 1, 0, 0, 0, 0, 1, 0]
+    },
+    {
+        name: 'Apple',
+        image: 'assets/apple.png',
+        attack: 2,
+        defense: 1,
+        arrows: [0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+        name: 'Linux',
+        image: 'assets/linux.png',
+        attack: 2,
+        defense: 1,
+        arrows: [0, 1, 0, 1, 0, 1, 1, 0]
+    },
+    {
+        name: 'MongoDB',
+        image: 'assets/mongodb.png',
+        attack: 0,
+        defense: 4,
+        arrows: [0, 0, 0, 1, 0, 1, 1, 0]
     }
 ];
