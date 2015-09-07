@@ -1,4 +1,4 @@
-import pdb from '../../util/pdb';
+import pdb from '../../src/util/pdb';
 import baseCardsData from './baseCardsData';
 
 pdb.connect(process.env.TECH_DOMAIN_MONGOLAB_URI, 'baseCards')
