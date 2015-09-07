@@ -2,7 +2,7 @@ import playerPrimaryDeckService from '../services/playerPrimaryDeckService';
 
 export default function putPlayerPrimaryDeckController(request, reply) {
     let userId = request.params.userId;
-    let primaryDeck = JSON.parse(request.payload);
+    let primaryDeck = request.payload;
 
     playerPrimaryDeckService.updatePrimaryDeck(userId, primaryDeck)
         .then((playerDeck) => {
