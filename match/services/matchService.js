@@ -12,6 +12,7 @@ import updateActiveMatchByWinner from './repositories/updateActiveMatchByWinner'
 import updateActiveMatchByUser from './repositories/updateActiveMatchByUser';
 import updateActiveMatchWithTimeoutAndCardsToLoot from './repositories/updateActiveMatchWithTimeoutAndCardsToLoot';
 import updatePlayerDecksIfCardsAreLooted from './repositories/updatePlayerDecksIfCardsAreLooted';
+import updatePlayerScoresIfCardsAreLooted from './repositories/updatePlayerScoresIfCardsAreLooted'
 
 import turnPerformance from './functions/turnPerformance';
 import matchValidation from './functions/matchValidation';
@@ -139,7 +140,8 @@ export default {
             .then(setMatchToInactiveIfNoCardsToLootOrCardsHaveBeenLooted)
             .then(setMatchToInactiveIfDraw)
             .then(updateActiveMatchWithTurn)
-            .then(updatePlayerDecksIfCardsAreLooted);
+            .then(updatePlayerDecksIfCardsAreLooted)
+            .then(updatePlayerScoresIfCardsAreLooted);
     },
 
     performLoot(userId, loot) {
@@ -166,7 +168,8 @@ export default {
             .then(setCardToLoot)
             .then(setMatchToInactive)
             .then(updateActiveMatchByWinner)
-            .then(updatePlayerDecksIfCardsAreLooted);
+            .then(updatePlayerDecksIfCardsAreLooted)
+            .then(updatePlayerScoresIfCardsAreLooted);
     },
 
     timeOutTurn(userId) {
@@ -197,7 +200,8 @@ export default {
             .then(lootCardsAutomaticallyIfPerfectVictoryOrOnlyOneCardToLoot)
             .then(setMatchToInactiveIfNoCardsToLootOrCardsHaveBeenLooted)
             .then(updateActiveMatchWithTimeoutAndCardsToLoot)
-            .then(updatePlayerDecksIfCardsAreLooted);
+            .then(updatePlayerDecksIfCardsAreLooted)
+            .then(updatePlayerScoresIfCardsAreLooted);
     },
 
     timeOutLooting(userId) {
