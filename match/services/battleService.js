@@ -29,6 +29,9 @@ export default {
             opposingCardLocation = connectedOpposingCard.next();
         }
 
+        console.log("Battle events:");
+        console.log(events);
+
         return { cards, events };
     }
 }
