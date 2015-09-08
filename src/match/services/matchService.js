@@ -99,8 +99,6 @@ export default {
                 return collection.insert(match);
             })
             .then(() => {
-
-                console.log(match);
                 match._id = undefined;
                 return match;
             });
