@@ -31,7 +31,8 @@ require("babel/polyfill");
 let server = new Hapi.Server();
 
 server.connection({
-    port: process.env.PORT || 3001
+    port: process.env.PORT || 3001,
+    port: process.env.HOST || 'localhost'
 });
 
 server.start(() => {
