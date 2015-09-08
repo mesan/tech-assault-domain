@@ -29,6 +29,7 @@ export default {
 
             pCollection.pcount = pcount.bind(pCollection);
             pCollection.pfind = pfind.bind(pCollection);
+            pCollection.pfindOne = pfindOne.bind(pCollection);
 
             return [connection, pCollection];
         });
@@ -52,7 +53,27 @@ function pfind() {
         });
     };
 
+    pCursor.pcount = pcount.bind(pCursor);
+
     return pCursor;
+}
+
+
+function pfindOne(query, options) {
+    const args = [ query ];
+
+    return new Promise((resolve, reject) => {
+        args.push((err, doc) => {
+            console.log(err, doc);
+            if (err) {
+                return reject(err);
+            }
+
+            resolve(doc);
+        });
+
+        this.findOne.apply(this, args);
+    });
 }
 
 function pcount() {

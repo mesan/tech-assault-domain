@@ -5,26 +5,27 @@ export default {
     fetchRankingForPlayer(userId) {
         return pdb.connect(process.env.TECH_DOMAIN_MONGOLAB_URI, 'rankings')
             .then(([db, collection]) => {
-                let player = collection
-                    .findOne(
-                        { userId : userId },
-                        { _id: 0 }); // excludes
+                const player = collection
+                    .pfindOne(
+                    {userId: userId},
+                    {_id: 0}); // excludes
 
-                let rank = player.then((p) => {
-                    return collection
-                        .find({ score: { $gt: p.score } })
-                        .count();
-                });
+                return Promise.all([ collection, player ]);
+            })
+            .then(([collection, player]) => {
+                if (!player) {
+                    throw `Player ${userId} not found!`;
+                }
+
+                const rank = collection
+                    .pfind({ score: { $gt: player.score } })
+                    .pcount();
 
                 return Promise.all([player, rank]);
             })
             .then(([player, rank] ) => {
                 player.rank = rank + 1;
                 return player;
-            })
-            .catch((err) => {
-                console.log(err);
-                return err;
             });
     },
 
