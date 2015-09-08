@@ -7,6 +7,8 @@ import highscoreEndpoints from './highscore/highscoreEndpoints';
 import matchEndpoints from './match/matchEndpoints';
 import battleSimulatorEndpoints from './engine/battleSimulatorEndpoints';
 
+require('./polyfills/Array.findIndex');
+
 const envVars = [
     'TECH_DOMAIN_MONGOLAB_URI'
 ];
@@ -23,6 +25,8 @@ if (undefinedEnvVars.length > 0) {
     console.error(`You need to define the following environment variable(s): ${undefinedEnvVars.join(', ')}`);
     process.exit(1);
 }
+
+require("babel/polyfill");
 
 let server = new Hapi.Server();
 
