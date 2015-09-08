@@ -32,7 +32,7 @@ export default {
         return pdb.connect(process.env.TECH_DOMAIN_MONGOLAB_URI, 'rankings')
             .then(([db, collection]) => {
                 return collection
-                    .find({}, {_id : 0})
+                    .pfind({}, {_id : 0})
                     .sort({score: -1})
                     .limit(numberOfRankings)
                     .toArray();
