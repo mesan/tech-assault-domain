@@ -26,13 +26,11 @@ if (undefinedEnvVars.length > 0) {
     process.exit(1);
 }
 
-require("babel/polyfill");
-
 let server = new Hapi.Server();
 
 server.connection({
     port: process.env.PORT || 3001,
-    port: process.env.HOST || 'localhost'
+    host: process.env.HOST || 'localhost'
 });
 
 server.start(() => {
