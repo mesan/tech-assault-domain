@@ -20,6 +20,8 @@ import turnValidation from './functions/turnValidation';
 import lootValidation from './functions/lootValidation';
 import lootPerformance from './functions/lootPerformance';
 
+import highscoreService from '../../highscore/services/highscoreService';
+
 import { getRandomNumber } from '../../util/random';
 
 const {
@@ -62,12 +64,19 @@ export default {
         return Promise.all([
             playerPrimaryDeckService.getPlayerPrimaryDeck(userId1),
             playerPrimaryDeckService.getPlayerPrimaryDeck(userId2),
+            highscoreService.fetchRankingForPlayer(userId1),
+            highscoreService.fetchRankingForPlayer(userId2),
             pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'matches')])
-            .then(([player1primaryDeck, player2primaryDeck, [db, collection]]) => {
+            .then(([player1primaryDeck, player2primaryDeck, player1highscore, player2highscore, [db, collection]]) => {
 
                 const primaryDecks = [
                     player1primaryDeck.primaryDeck,
                     player2primaryDeck.primaryDeck
+                ];
+
+                const highscores = [
+                    player1highscore,
+                    player2highscore
                 ];
 
                 const originalPrimaryDecks = primaryDecks.map(primaryDeck => primaryDeck.map(card => card.id));
@@ -83,12 +92,15 @@ export default {
                     primaryDecks,
                     originalPrimaryDecks,
                     users,
+                    highscores,
                     finished
                 };
 
                 return collection.insert(match);
             })
             .then(() => {
+
+                console.log(match);
                 match._id = undefined;
                 return match;
             });

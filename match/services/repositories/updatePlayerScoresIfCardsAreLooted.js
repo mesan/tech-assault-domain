@@ -1,4 +1,5 @@
 import pdb from '../../../util/pdb';
+import scoreCalculator from './../../../highscore/services/scoreCalculator'
 
 const {
     TECH_DOMAIN_MONGOLAB_URI
@@ -10,6 +11,7 @@ export default function updatePlayerScoresIfCardsAreLooted(match) {
     }
 
     const { users } = match;
+    const { totalScoreDeck } = scoreCalculator;
 
     let playerOneId = users[0].id;
     let playerOneName = users[0].name;
@@ -30,8 +32,8 @@ export default function updatePlayerScoresIfCardsAreLooted(match) {
             const playerOneDeck = docs[0].userId === playerOneId ? docs[0] : docs[1];
             const playerTwoDeck = docs[0].userId === playerTwoId ? docs[0] : docs[1];
 
-            let playerOneScore = playerOneDeck.deck.reduce(totalScoresForCards, 0);
-            let playerTwoScore = playerTwoDeck.deck.reduce(totalScoresForCards, 0);
+            let playerOneScore = totalScoreDeck(playerOneDeck.deck);
+            let playerTwoScore = totalScoreDeck(playerTwoDeck.deck);
 
             pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'rankings')
                 .then(([db, rankingsCollection]) => {
@@ -59,11 +61,4 @@ export default function updatePlayerScoresIfCardsAreLooted(match) {
                 });
         })
         .then(() => match);
-}
-
-function totalScoresForCards (previousCardScore, currentCard) {
-    let attackValue = currentCard.attack;
-    let defenseValue = currentCard.defense;
-
-    return previousCardScore + (attackValue * defenseValue * (attackValue + defenseValue));
 }
