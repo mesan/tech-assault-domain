@@ -7,10 +7,30 @@ import highscoreEndpoints from './highscore/highscoreEndpoints';
 import matchEndpoints from './match/matchEndpoints';
 import battleSimulatorEndpoints from './engine/battleSimulatorEndpoints';
 
+require('./polyfills/Array.findIndex');
+
+const envVars = [
+    'TECH_DOMAIN_MONGOLAB_URI'
+];
+
+let undefinedEnvVars = [];
+
+for (let envVar of envVars) {
+    if (typeof process.env[envVar] === 'undefined') {
+        undefinedEnvVars.push(envVar);
+    }
+}
+
+if (undefinedEnvVars.length > 0) {
+    console.error(`You need to define the following environment variable(s): ${undefinedEnvVars.join(', ')}`);
+    process.exit(1);
+}
+
 let server = new Hapi.Server();
 
 server.connection({
-    port: process.env.PORT || 3001
+    port: process.env.PORT || 3001,
+    host: process.env.HOST || 'localhost'
 });
 
 server.start(() => {

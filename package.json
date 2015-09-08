@@ -4,15 +4,16 @@
   "description": "Service performing domain operations in Tech Assault.",
   "scripts": {
     "test": "mocha",
-    "start": "babel-node server",
+    "start": "babel-node src/server",
     "import-data": "babel-node scripts/createBaseCards/index"
   },
   "author": "Arild Wanvik Tvergrov <arild.wanvik@gmail.com>",
   "license": "BSD-2-Clause",
   "dependencies": {
+    "babel": "~5.2.15",
+    "babel-runtime": "^5.8.20",
     "hapi": "~8.4.0",
     "immutable": "~3.7.2",
-    "babel": "~5.2.15",
     "mongodb": "~2.0.28",
     "node-uuid": "~1.4.3"
   }
