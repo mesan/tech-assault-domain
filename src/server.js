@@ -7,6 +7,7 @@ import highscoreEndpoints from './highscore/highscoreEndpoints';
 import matchEndpoints from './match/matchEndpoints';
 import battleSimulatorEndpoints from './engine/battleSimulatorEndpoints';
 
+require("console-stamp")(console, { pattern: 'yymmdd/HHMMss.L'});
 require('./polyfills/Array.findIndex');
 
 const envVars = [
@@ -26,6 +27,14 @@ if (undefinedEnvVars.length > 0) {
     process.exit(1);
 }
 
+var options = {
+    opsInterval: 1000,
+    reporters: [{
+        reporter: require('good-console'),
+        events: { log: '*', request: '*', response: '*' }
+    }]
+};
+
 let server = new Hapi.Server();
 
 server.connection({
@@ -33,22 +42,33 @@ server.connection({
     host: process.env.HOST || 'localhost'
 });
 
-server.start(() => {
-    console.log('Server running at:', server.info.uri);
-    console.log('Configured MongoDb instance:', process.env.TECH_DOMAIN_MONGOLAB_URI);
-    
-    boardEndpoints(server);
-    playerEndpoints(server);
-    enlistmentEndpoints(server);
-    highscoreEndpoints(server);
-    matchEndpoints(server);
-    battleSimulatorEndpoints(server);
+server.register({
+    register: require('good'),
+    options: options
+}, function (err) {
 
-    server.route({
-        method: ['GET'],
-        path: '/',
-        handler: function (request, reply) {
-            return reply('hello');
-        }
-    });
+    if (err) {
+        console.error(err);
+    }
+    else {
+        server.start(() => {
+            console.log('Server running at:', server.info.uri);
+            console.log('Configured MongoDb instance:', process.env.TECH_DOMAIN_MONGOLAB_URI);
+
+            boardEndpoints(server);
+            playerEndpoints(server);
+            enlistmentEndpoints(server);
+            highscoreEndpoints(server);
+            matchEndpoints(server);
+            battleSimulatorEndpoints(server);
+
+            server.route({
+                method: ['GET'],
+                path: '/',
+                handler: function (request, reply) {
+                    return reply('hello');
+                }
+            });
+        });
+    }
 });

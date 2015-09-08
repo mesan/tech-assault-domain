@@ -17,6 +17,7 @@ let playerDeckService = {
                 return collection.pfind({ userId }, { _id: 0 }).limit(1).toArray();
             })
             .then((decks) => {
+                console.log('decks');
                 const hasDeck = decks.length > 0;
 
                 if (!hasDeck) {
