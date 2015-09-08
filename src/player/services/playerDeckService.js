@@ -25,16 +25,37 @@ let playerDeckService = {
                         .then(() => playerDeckService.getPlayerDeck(userId));
                 }
 
-                const deck = decks[0];
-                const deckSize = deck.deck.length;
+                const deckDoc = decks[0];
+                const deck = deckDoc.deck;
+                const deckSize = deck.length;
 
                 if (deckSize < deckSizeLowerLimit) {
                     return randomBaseCardService.getRandomBaseCards(deckSizeLowerLimit - deckSize)
-                        .then(baseCards => playerDeckService.updatePlayerDeck(userId, deck, baseCards))
+                        .then(baseCards => playerDeckService.updatePlayerDeck(userId, deckDoc, baseCards))
                         .then(() => playerDeckService.getPlayerDeck(userId));
                 }
 
-                return decks[0];
+
+                const primaryDeck = deckDoc.primaryDeck;
+                const primaryDeckSize = primaryDeck.length;
+
+                if (primaryDeckSize < deckSizeLowerLimit) {
+                    const cardIdsNotInPrimaryDeck = deck
+                        .filter(card => primaryDeck.indexOf(card.id === -1))
+                        .map(card => card.id);
+
+                    const newPrimaryDeck = primaryDeck.slice();
+
+                    while (newPrimaryDeck.length < deckSizeLowerLimit && cardIdsNotInPrimaryDeck.length > 0) {
+                        newPrimaryDeck.push(cardIdsNotInPrimaryDeck.pop());
+                    }
+
+                    const newDeck = { deck, primaryDeck: newPrimaryDeck, userId };
+
+                    return playerDeckService.updatePlayerDeck(userId, newDeck, []);
+                }
+
+                return deckDoc;
             });
     },
 

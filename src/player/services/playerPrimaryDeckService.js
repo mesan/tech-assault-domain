@@ -11,36 +11,8 @@ const deckSizeLowerLimit = 5;
 const playerPrimaryDeckService = {
 
     getPlayerPrimaryDeck(userId) {
-        return pdb.connect(TECH_DOMAIN_MONGOLAB_URI, 'playerDecks')
-            .then(([db, collection]) => {
-                return collection.pfind({ userId }, { _id: 0}).limit(1).toArray();
-            })
-            .then((decks) => {
-                const hasDeck = decks.length > 0;
-
-                if (!hasDeck) {
-                    return randomBaseCardService.getRandomBaseCards(deckSizeLowerLimit)
-                        .then((baseCards) => playerDeckService.createPlayerDeck(userId, baseCards))
-                        .then(() => playerPrimaryDeckService.getPlayerPrimaryDeck(userId));
-                }
-
-                const deck = decks[0];
-                const deckSize = deck.deck.length;
-
-                if (deckSize < deckSizeLowerLimit) {
-                    return randomBaseCardService.getRandomBaseCards(deckSizeLowerLimit - deckSize)
-                        .then((baseCards) => playerDeckService.updatePlayerDeck(userId, deck, baseCards))
-                        .then(() => playerPrimaryDeckService.getPlayerPrimaryDeck(userId));
-                }
-
-                if (typeof deck.deck === 'undefined') {
-                    deck.deck = [];
-                }
-
-                if (typeof deck.primaryDeck === 'undefined') {
-                    deck.primaryDeck = [];
-                }
-
+        return playerDeckService.getPlayerDeck(userId)
+            .then(deck => {
                 let playerDeckById = deck.deck.reduce((playerDeckById, card) => {
                     playerDeckById[card.id] = card;
                     return playerDeckById;
