@@ -48,7 +48,10 @@ let playerDeckService = {
                     const newPrimaryDeck = primaryDeck.slice();
 
                     while (newPrimaryDeck.length < deckSizeLowerLimit && cardIdsNotInPrimaryDeck.length > 0) {
-                        newPrimaryDeck.push(cardIdsNotInPrimaryDeck.pop());
+                        const cardId = cardIdsNotInPrimaryDeck.pop();
+                        if (newPrimaryDeck.indexOf(cardId) === -1) {
+                            newPrimaryDeck.push(cardId);
+                        }
                     }
 
                     const newDeck = { deck, primaryDeck: newPrimaryDeck, userId };
