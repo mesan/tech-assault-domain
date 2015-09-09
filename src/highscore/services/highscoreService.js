@@ -14,7 +14,7 @@ export default {
             })
             .then(([collection, player]) => {
                 if (!player) {
-                    throw `Player ${userId} not found!`;
+                    player = { score: 0, rank: 0 };
                 }
 
                 const rank = collection
