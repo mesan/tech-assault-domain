@@ -9,6 +9,7 @@ import battleSimulatorEndpoints from './engine/battleSimulatorEndpoints';
 
 require("console-stamp")(console, { pattern: 'yymmdd/HHMMss.L'});
 require('./polyfills/Array.findIndex');
+import 'babel-polyfill';
 
 const envVars = [
     'TECH_DOMAIN_MONGOLAB_URI'

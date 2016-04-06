@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Service performing domain operations in Tech Assault.",
   "scripts": {
+    "postinstall": "./node_modules/.bin/babel src -d dist",
     "test": "mocha",
     "start": "babel-node src/server",
     "import-data": "babel-node scripts/createBaseCards/index"
@@ -11,6 +12,7 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "babel": "~5.2.15",
+    "babel-polyfill": "6.7.4",
     "babel-runtime": "^5.8.20",
     "console-stamp": "^0.2.0",
     "good": "^6.3.0",
